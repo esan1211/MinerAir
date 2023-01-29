@@ -1,4 +1,5 @@
-//PA0 Enrique Munoz CS3331
+//PA0 Enrique Munoz
+//Dr. Mejia CS3331
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
