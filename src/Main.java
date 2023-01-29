@@ -3,7 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class App {
+public class Main {
     public static void main(String[] args) throws Exception {
         ArrayList<Flight> Flights = new ArrayList<Flight>(); //ArrayList of flights
         BufferedWriter buffWriter = new BufferedWriter(new FileWriter("Log.txt")); //Log file to track changes
@@ -18,7 +18,6 @@ public class App {
             Flights.add(new Flight(readFlights[0], readFlights[1], readFlights[2], readFlights[3], readFlights[4], readFlights[5], readFlights[6], readFlights[7], Integer.valueOf(readFlights[8]), Integer.valueOf(readFlights[9]), Integer.valueOf(readFlights[10]), readFlights[11], readFlights[12], Integer.valueOf(readFlights[13]), Integer.valueOf(readFlights[14]), Integer.valueOf(readFlights[15]), Integer.valueOf(readFlights[16]), Integer.valueOf(readFlights[17]), Integer.valueOf(readFlights[18]), Integer.valueOf(readFlights[19])));
         }
         Buffreader.close();
-        
         //Clears Log File
         PrintWriter pWriter = new PrintWriter("Log.txt");
         pWriter.print("");
@@ -29,7 +28,7 @@ public class App {
         System.out.println("Hello, Welcome to MinerAir! \nPlease input a Flight ID to see more information about this flight.");
         
         //User interaction
-        while(!input.equals("end")){
+        while(!input.toLowerCase().equals("end")){
             input = scnr.nextLine();
             int currIdx = -1; //Idx of flight that was accessed
             for(int i = 0; i < Flights.size(); i++){
@@ -41,8 +40,8 @@ public class App {
                 System.out.println("This is not a valid Flight ID, please try again."); //If ID doesn't exist
                 continue;
             }
-            while(!input.equals("end")){
-                System.out.println("\nInput the corresponding number if you'd like to access any of of these attributes.");
+            while(!input.toLowerCase().equals("end")){
+                System.out.println("\nInput the corresponding number if you'd like to access any of of these attributes.\nType 'End' to terminate the program");
                 System.out.println("\n1.Show Flight Information \n2.Return Any Specific Attribute About the Flight\n3.Update Flight Attributes");
                 input = scnr.nextLine();
                 while(!input.equals("1") && !input.equals("2") && !input.equals("3") && !input.toLowerCase().equals("end")){
@@ -77,10 +76,10 @@ public class App {
                             System.out.println(Flights.get(currIdx).getDepartureTime());
                             break;
                         case "7":
-                            System.out.println(Flights.get(currIdx).getArrivalDate());
+                            System.out.println(Flights.get(currIdx).getArrivalTime());
                             break;
                         case "8":
-                            System.out.println(Flights.get(currIdx).getArrivalTime());
+                            System.out.println(Flights.get(currIdx).getArrivalDate());
                             break;          
                         case "9":
                             System.out.println(Flights.get(currIdx).getDuration());
