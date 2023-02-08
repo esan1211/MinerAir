@@ -8,7 +8,7 @@ public class Flight {
     private String departureTime;
     private String arrivalDate;
     private String arrivalTime;
-    private String ID;
+    private String id;
     private String flightNumber;
     private int ticketsPurchased = 0;
     private int firstClassPrice;
@@ -30,7 +30,7 @@ public class Flight {
     }
 
     public Flight(String idIn, String flightNumberIn, String originAirportIn, String originCodeIn, String destinationAirportIn, String destinationCodeIn, String depratingDateIn, String departingTimeIn, int durationIn, int distanceIn, int timeZoneDifferenceIn, String arrivalDateIn, String arrivalTimeIn, int totalSeatsIn, int firstClassSeatsIn, int businessClassSeatsIn, int mainCabinSeatsIn, int firstClassPriceIn, int businessClassPriceIn, int mainCabinPriceIn){
-        this.ID = idIn;
+        this.id = idIn;
         this.flightNumber = flightNumberIn;
         this.originAirport = originAirportIn;
         this.originCode = originCodeIn;
@@ -284,7 +284,7 @@ public class Flight {
     }
 
     public String getID(){
-        return this.ID;
+        return this.id;
     }
 
     public void printFlight(){ //Prints attributes of obj
