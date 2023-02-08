@@ -43,5 +43,22 @@ public class RunFlight{
         for(int i = 0; i < Flights.size(); i++){ //Test to see if flights populated
             System.out.println(Flights.get(i).getOriginAirport());
         }
+
+        //User Interaction
+        Scanner scnr = new Scanner(System.in);
+        System.out.println("Hello Welcome to MinerAir, are you an individual customer?");
+        String userInput = scnr.nextLine();
+        if(userInput.toLowerCase().equals("yes")){
+            int incorrectTries = 0;
+            while(incorrectTries < 3){
+            System.out.println("Please enter your username.");
+            }
+            if(incorrectTries > 3){
+                System.out.println("You have reached the max amount of tries, please try again another time.");
+            }
+        }else{
+            System.out.println("Sorry, this system is for individual customers only.");    
+        }
+    
     }
 }
