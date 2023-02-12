@@ -22,8 +22,8 @@ import java.io.FileNotFoundException;
 public class RunFlight{
     public static void main(String[] args){
         //ArrayList<Flight> Flights = new ArrayList<Flight>();
-        HashMap<String, Flight> Flights = new HashMap<String, Flight>();
-        HashMap<String, Customer> Customers = new HashMap<String, Customer>();
+        HashMap<String,Flight> flightMap = new HashMap<String,Flight>();
+        HashMap<String,Customer> customerMap = new HashMap<String,Customer>();
         
         //File Reading for Flight Schedule
         try{
@@ -36,7 +36,7 @@ public class RunFlight{
             //Populates a HashMap of Flights with ID as a key and Flight Obj as a value
             for(int i = 0; i < lines.size(); i++){ //Traverses through every line in csv ArrayList and creates a string array to split by commas and add new Flight obj to Flights ArrayList
                 String[] readFlights = lines.get(i).split(",");
-                Flights.put(readFlights[0], new Flight(readFlights[0], readFlights[1], readFlights[2], readFlights[3], readFlights[4], readFlights[5], readFlights[6], readFlights[7], Integer.valueOf(readFlights[8]), Integer.valueOf(readFlights[9]), Integer.valueOf(readFlights[10]), readFlights[11], readFlights[12], Integer.valueOf(readFlights[13]), Integer.valueOf(readFlights[14]), Integer.valueOf(readFlights[15]), Integer.valueOf(readFlights[16]), Integer.valueOf(readFlights[17]), Integer.valueOf(readFlights[18]), Integer.valueOf(readFlights[19])));
+                flightMap.put(readFlights[0], new Flight(readFlights[0], readFlights[1], readFlights[2], readFlights[3], readFlights[4], readFlights[5], readFlights[6], readFlights[7], Integer.valueOf(readFlights[8]), Integer.valueOf(readFlights[9]), Integer.valueOf(readFlights[10]), readFlights[11], readFlights[12], Integer.valueOf(readFlights[13]), Integer.valueOf(readFlights[14]), Integer.valueOf(readFlights[15]), Integer.valueOf(readFlights[16]), Integer.valueOf(readFlights[17]), Integer.valueOf(readFlights[18]), Integer.valueOf(readFlights[19])));
             }
             buffReader.close();
         }catch(IOException e){
@@ -54,29 +54,71 @@ public class RunFlight{
             //Populates a HashMap of Customers 
             for(int i = 0; i < lines.size(); i++){ //Traverses through every line in csv ArrayList and creates a string array to split by commas and add new Flight obj to Flights ArrayList
                 String[] readCustomers = lines.get(i).split(",");
-                Customers.put(readCustomers[1] + readCustomers[2], new Customer(readCustomers[1], readCustomers[2], readCustomers[0], readCustomers[6], readCustomers[7], 0, readCustomers[3]));
+                customerMap.put(readCustomers[1] + " " + readCustomers[2], new Customer(readCustomers[1], readCustomers[2], readCustomers[0], readCustomers[6], readCustomers[7], 0, Double.valueOf(readCustomers[3])));
             }
             buffReader.close();
         }catch(IOException e){
             System.out.println("The file cannot be found.");
         }
-        Flights.get("1").printFlight();
+        
+        /*for (HashMap.Entry<String,Customer> mapElement : Customers.entrySet()) { //Testing HashMap
+            System.out.println(mapElement.getKey());
+        }*/
+        System.out.println(customerMap.get("Mickey Mouse").getUsername());
+        
+        String customerName = loginMenu(customerMap);
+        if(customerMap.containsKey(customerName)){
+            flightMenu(flightMap, customerMap, customerName);
+        }
+    }
 
-        //User Interaction
+    //User Login Interaction Method
+    public static String loginMenu(HashMap<String,Customer> customerMap){
         Scanner scnr = new Scanner(System.in);
         System.out.println("Hello Welcome to MinerAir, are you an individual customer?");
         String userInput = scnr.nextLine();
+        String customerName = "";
         if(userInput.toLowerCase().equals("yes")){
-            int incorrectTries = 0;
-            while(incorrectTries < 3){
-            System.out.println("Please enter your username.");
-            }
-            if(incorrectTries > 3){
-                System.out.println("You have reached the max amount of tries, please try again another time.");
+            while(!customerMap.containsKey(customerName)){
+                System.out.println("\nPlease enter your first and last name. Example: John Doe");
+                customerName = scnr.nextLine();
+                if(customerMap.containsKey(customerName)){
+                    System.out.println("\nPlease enter your account's username");
+                    while(!customerMap.get(customerName).getUsername().equals(userInput)){
+                        userInput = scnr.nextLine();
+                        if(customerMap.get(customerName).getUsername().equals(userInput)){
+                            int numOfTries = 0; //Number of tries before user gets logged out because of incorrect password attempts
+                            while(numOfTries < 3){
+                                System.out.println("Please enter your password.");
+                                userInput = scnr.nextLine();
+                                if(customerMap.get(customerName).getPassword().equals(userInput)){
+                                    System.out.println("\nWelcome " + customerName + "! ");
+                                    scnr.close();
+                                    return customerName;
+                                }
+                                numOfTries++;    
+                            }
+                            System.out.println("Max number of password attempts has been reached please try again later.");
+                            scnr.close();
+                            return "";
+                        }
+                        else{
+                            System.out.println("Incorrect username, please try again.");
+                        }   
+                    }
+                }else{
+                    System.out.println("Unfortunately, this name is not in our database. Please try again.");
+                }
             }
         }else{
             System.out.println("Sorry, this system is for individual customers only.");    
         }
-    
+        scnr.close();
+        return "";     
     }
+
+    public static void flightMenu(HashMap<String,Flight> flightmap, HashMap<String,Customer> customerMap, String customerName){
+        System.out.println("HII");
+    }
+
 }
