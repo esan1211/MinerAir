@@ -4,14 +4,14 @@ public class Customer extends Person{
     private String username;
     private String password;
     private int numTickets = 0;
-    private int money;
+    private double money;
     
     //Constructors
     public Customer(){
 
     }
 
-    public Customer(String firstName, String lastName, String id, String username, String password, int numTickets, int money) {
+    public Customer(String firstName, String lastName, String id, String username, String password, int numTickets, double money) {
         super(firstName, lastName);
         this.id = id;
         this.username = username;
@@ -45,11 +45,11 @@ public class Customer extends Person{
         this.numTickets = numTickets;
     }
 
-    public int getMoney(){
+    public double getMoney(){
         return money;
     }
 
-    public void setMoney(int money){
+    public void setMoney(double money){
         this.money = money;
     }
     
