@@ -21,8 +21,6 @@ public class Flight {
     private int firstClassSeats;
     private int businessClassSeats;
     private int mainCabinSeats;
-
-
     
     //Constructors
     public Flight(){
@@ -53,7 +51,6 @@ public class Flight {
 
     }
 
-    //Methods
     public String[] timeChange(String depTime, int duration){ //Function to update arrival time if destination time is changed
         String[] result = new String[2]; //Return type in order to return a change of day and also the time change
         if(depTime == null){ //Need to declare a time first in order to change arrival time

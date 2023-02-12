@@ -1,5 +1,6 @@
 public class Customer extends Person{
     //Attributes
+    private String id;
     private String username;
     private String password;
     private int numTickets = 0;
@@ -10,8 +11,9 @@ public class Customer extends Person{
 
     }
 
-    public Customer(String firstName, String lastName, String username, String password, int numTickets, int money) {
+    public Customer(String firstName, String lastName, String id, String username, String password, int numTickets, int money) {
         super(firstName, lastName);
+        this.id = id;
         this.username = username;
         this.password = password;
         this.numTickets = numTickets;
