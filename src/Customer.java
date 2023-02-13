@@ -13,12 +13,12 @@ public class Customer extends Person{
 
     }
 
-    public Customer(String firstName, String lastName, String id, String username, String password, double money) {
-        super(firstName, lastName);
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.money = money;
+    public Customer(String firstNameIn, String lastNameIn, String idIn, String usernameIn, String passwordIn, double moneyIn) {
+        super(firstNameIn, lastNameIn);
+        this.id = idIn;
+        this.username = usernameIn;
+        this.password = passwordIn;
+        this.money = moneyIn;
     }
 
     //Getters & Setters
@@ -26,32 +26,32 @@ public class Customer extends Person{
         return username;
     }
 
-    public void setUsername(String username){
-        this.username = username;
+    public void setUsername(String usernameIn){
+        this.username = usernameIn;
     }
 
     public String getPassword(){
         return password;
     }
 
-    public void setPassword(String password){
-        this.password = password;
+    public void setPassword(String passwordIn){
+        this.password = passwordIn;
     }
 
     public ArrayList<Ticket> getTicketsPurchased(){
         return ticketsPurchased;
     }
 
-    public void setTicketsPurchased(ArrayList<Ticket> ticketsPurchased){
-        this.ticketsPurchased = ticketsPurchased;
+    public void setTicketsPurchased(ArrayList<Ticket> ticketsPurchasedIn){
+        this.ticketsPurchased = ticketsPurchasedIn;
     }
 
     public double getMoney(){
         return money;
     }
 
-    public void setMoney(double money){
-        this.money = money;
+    public void setMoney(double moneyIn){
+        this.money = moneyIn;
     }
     
 }

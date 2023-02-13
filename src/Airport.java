@@ -7,8 +7,8 @@ public class Airport {
 
     }
 
-    public Airport(String airportName){
-        this.airportName = airportName;
+    public Airport(String airportNameIn){
+        this.airportName = airportNameIn;
     }
 
     //Getters & Setters
@@ -16,8 +16,8 @@ public class Airport {
         return airportName;
     }
 
-    public void setAirportName(String airportName){
-        this.airportName = airportName;
+    public void setAirportName(String airportNameIn){
+        this.airportName = airportNameIn;
     }
     
     

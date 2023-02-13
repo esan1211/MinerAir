@@ -15,14 +15,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.io.FileNotFoundException;
 import java.util.Random;
 
 
 
 public class RunFlight{
     public static void main(String[] args){
-        //ArrayList<Flight> Flights = new ArrayList<Flight>();
         HashMap<String,Flight> flightMap = new HashMap<String,Flight>();
         HashMap<String,Customer> customerMap = new HashMap<String,Customer>();
         
@@ -123,97 +121,110 @@ public class RunFlight{
     public static void flightMenu(HashMap<String,Flight> flightMap, HashMap<String,Customer> customerMap, String customerName){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
-        while(!userInput.toLowerCase().equals("exit")){
-            System.out.println("Enter the Flight ID of a specific flight.\n\nType 'Exit' if you'd like to exit the Main Menu.\n");
-            userInput = scnr.nextLine();
-            if(flightMap.containsKey(userInput)){
-                String flightAccessed = userInput;
-                while(!userInput.toLowerCase().equals("back")){
-                    System.out.println("\nHere's information about this flight.");
-                    flightMap.get(flightAccessed).printFlight();
-                    System.out.println("\nEnter the number for the type of ticket you would like to purchase.\n1. First Class $" + flightMap.get(flightAccessed).getFirstClassPrice() +"\n2. Business Class $" + flightMap.get(flightAccessed).getBusinessClassPrice() + "\n3. Main Cabin $" + flightMap.get(flightAccessed).getMainCabinPrice() + "\n\nOr type 'Back' in order to go back to the Main Menu.\n");
-                    userInput = scnr.nextLine();
-                    int numTickets = 0;
-                    int totalPrice = 0;
-                    Random random = new Random();
-                    int confirmationNum = random.nextInt(1000000); //Generates random confirmation number
-                    switch(userInput){
-                        case "1": //First Class Interaction
-                            System.out.println("How many First Class Tickets do you want to buy?");
-                            numTickets = scnr.nextInt();
-                            scnr.nextLine(); //Skips line since previous line was int
-                            if(numTickets < 1 || numTickets > 6){
-                                System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
+        BufferedWriter buffWriter;
+        try{
+            buffWriter = new BufferedWriter(new FileWriter("Log.txt."));
+            while(!userInput.toLowerCase().equals("exit")){
+                System.out.println("Enter the Flight ID of a specific flight.\n\nType 'Exit' if you'd like to exit the Main Menu.\n");
+                userInput = scnr.nextLine();
+                if(flightMap.containsKey(userInput)){
+                    String flightAccessed = userInput;
+                    buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + "\n");
+                    while(!userInput.toLowerCase().equals("back")){
+                        System.out.println("\nHere's information about this flight.");
+                        flightMap.get(flightAccessed).printFlight();
+                        System.out.println("\nEnter the number for the type of ticket you would like to purchase.\n1. First Class $" + flightMap.get(flightAccessed).getFirstClassPrice() +"\n2. Business Class $" + flightMap.get(flightAccessed).getBusinessClassPrice() + "\n3. Main Cabin $" + flightMap.get(flightAccessed).getMainCabinPrice() + "\n\nOr type 'Back' in order to go back to the Main Menu.\n");
+                        userInput = scnr.nextLine();
+                        int numTickets = 0;
+                        int totalPrice = 0;
+                        Random random = new Random();
+                        int confirmationNum = random.nextInt(1000000); //Generates random confirmation number
+                        switch(userInput){
+                            case "1": //First Class Interaction
+                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", accessed First Class Seat Prices.\n");
+                                System.out.println("How many First Class Tickets do you want to buy?");
+                                numTickets = scnr.nextInt();
+                                scnr.nextLine(); //Skips line since previous line was int
+                                if(numTickets < 1 || numTickets > 6){
+                                    System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
+                                    break;
+                                }
+                                if(numTickets > flightMap.get(flightAccessed).getFirstClassSeats()){
+                                    System.out.println("There is not enough seats in this section, try looking for another section.");
+                                }
+                                totalPrice = numTickets * flightMap.get(flightAccessed).getFirstClassPrice();
+                                if(customerMap.get(customerName).getMoney() - totalPrice < 0){
+                                    System.out.println("Sorry, but you do not have enough money for this purchase");
+                                    break;
+                                }
+                                flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                flightMap.get(flightAccessed).setFirstClassSeats((flightMap.get(flightAccessed).getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
+                                customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the arraylist of tickets in the custmer obj
+                                flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
+                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", bought " + numTickets + " First Class Seats.\n");
+                                System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
                                 break;
-                            }
-                            if(numTickets > flightMap.get(flightAccessed).getFirstClassSeats()){
-                                System.out.println("There is not enough seats in this section, try looking for another section.");
-                            }
-                            totalPrice = numTickets * flightMap.get(flightAccessed).getFirstClassPrice();
-                            if(customerMap.get(customerName).getMoney() - totalPrice < 0){
-                                System.out.println("Sorry, but you do not have enough money for this purchase");
+                            case "2": //Business Class Interaction
+                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", accessed Business Class Seat Prices.\n");
+                                System.out.println("How many Business Class Tickets do you want to buy?");
+                                numTickets = scnr.nextInt();
+                                scnr.nextLine(); //Skips line since previous line was int
+                                if(numTickets < 1 || numTickets > 6){
+                                    System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
+                                    break;
+                                }
+                                if(numTickets > flightMap.get(flightAccessed).getBusinessSeats()){
+                                    System.out.println("There is not enough seats in this section, try looking for another section.");
+                                }
+                                totalPrice = numTickets * flightMap.get(flightAccessed).getBusinessClassPrice();
+                                if(customerMap.get(customerName).getMoney() - totalPrice < 0){
+                                    System.out.println("Sorry, but you do not have enough money for this purchase");
+                                    break;
+                                }
+                                flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                flightMap.get(flightAccessed).setBusinessClassSeats((flightMap.get(flightAccessed).getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
+                                customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in the custmer obj
+                                flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
+                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", bought " + numTickets + " Business Class Seats.\n");
+                                System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
                                 break;
-                            }
-                            flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
-                            flightMap.get(flightAccessed).setFirstClassSeats((flightMap.get(flightAccessed).getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
-                            customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
-                            customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the arraylist of tickets in the custmer obj
-                            flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
-                            System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
-                            break;
-                        case "2": //Business Class Interaction
-                            System.out.println("How many Business Class Tickets do you want to buy?");
-                            numTickets = scnr.nextInt();
-                            scnr.nextLine(); //Skips line since previous line was int
-                            if(numTickets < 1 || numTickets > 6){
-                                System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
+                            case "3": //Main Cabin Interaction
+                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", accessed Main Cabin Seat Prices.\n");
+                                System.out.println("How many Main Cabin Tickets do you want to buy?");
+                                numTickets = scnr.nextInt();
+                                scnr.nextLine(); //Skips line since previous line was int
+                                if(numTickets < 1 || numTickets > 6){
+                                    System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
+                                    break;
+                                }
+                                if(numTickets > flightMap.get(flightAccessed).getMainCabinSeats()){
+                                    System.out.println("There is not enough seats in this section, try looking for another section.");
+                                }
+                                totalPrice = numTickets * flightMap.get(flightAccessed).getMainCabinPrice();
+                                if(customerMap.get(customerName).getMoney() - totalPrice < 0){
+                                    System.out.println("Sorry, but you do not have enough money for this purchase");
+                                    break;
+                                }
+                                flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                flightMap.get(flightAccessed).setMainCabinSeats((flightMap.get(flightAccessed).getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
+                                customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in the custmer obj
+                                flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
+                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", bought " + numTickets + " Main Cabin Seats.\n");
+                                System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
                                 break;
-                            }
-                            if(numTickets > flightMap.get(flightAccessed).getBusinessSeats()){
-                                System.out.println("There is not enough seats in this section, try looking for another section.");
-                            }
-                            totalPrice = numTickets * flightMap.get(flightAccessed).getBusinessClassPrice();
-                            if(customerMap.get(customerName).getMoney() - totalPrice < 0){
-                                System.out.println("Sorry, but you do not have enough money for this purchase");
-                                break;
-                            }
-                            flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
-                            flightMap.get(flightAccessed).setBusinessClassSeats((flightMap.get(flightAccessed).getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
-                            customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
-                            customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in the custmer obj
-                            flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
-                            System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
-                            break;
-                        case "3": //Main Cabin Interaction
-                            System.out.println("How many Main Cabin Tickets do you want to buy?");
-                            numTickets = scnr.nextInt();
-                            scnr.nextLine(); //Skips line since previous line was int
-                            if(numTickets < 1 || numTickets > 6){
-                                System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
-                                break;
-                            }
-                            if(numTickets > flightMap.get(flightAccessed).getMainCabinSeats()){
-                                System.out.println("There is not enough seats in this section, try looking for another section.");
-                            }
-                            totalPrice = numTickets * flightMap.get(flightAccessed).getMainCabinPrice();
-                            if(customerMap.get(customerName).getMoney() - totalPrice < 0){
-                                System.out.println("Sorry, but you do not have enough money for this purchase");
-                                break;
-                            }
-                            flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
-                            flightMap.get(flightAccessed).setMainCabinSeats((flightMap.get(flightAccessed).getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
-                            customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
-                            customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in the custmer obj
-                            flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
-                            System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
-                            break;
+                        }
                     }
-                }
-            }else if(!userInput.toLowerCase().equals("exit")){
-                System.out.println("This flight does not exist, try again.");
-            }       
+                }else if(!userInput.toLowerCase().equals("exit")){
+                    System.out.println("This flight does not exist, try again.");
+                }      
+            }
+            buffWriter.close();
+        }catch(IOException e){
+            System.out.println("File not found.");
         }
-
     }
 
 }

@@ -8,9 +8,9 @@ public abstract class Person {
         
     }
 
-    public Person(String firstName, String lastName){
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Person(String firstNameIn, String lastNameIn){
+        this.firstName = firstNameIn;
+        this.lastName = lastNameIn;
     }
 
     //Getters & Setters
@@ -19,8 +19,8 @@ public abstract class Person {
     }
 
 
-    public void setFirstName(String firstName){
-        this.firstName = firstName;
+    public void setFirstName(String firstNameIn){
+        this.firstName = firstNameIn;
     }
 
 
@@ -29,8 +29,8 @@ public abstract class Person {
     }
 
 
-    public void setLastName(String lastName){
-        this.lastName = lastName;
+    public void setLastName(String lastNameIn){
+        this.lastName = lastNameIn;
     }
 
 }   

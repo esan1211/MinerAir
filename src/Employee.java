@@ -9,11 +9,11 @@ public class Employee extends Person{
     
     }
 
-    public Employee(String firstName, String lastName, int salary, String position, String[] schedule){
-        super(firstName, lastName);
-        this.salary = salary;
-        this.position = position;
-        this.schedule = schedule;
+    public Employee(String firstNameIn, String lastNameIn, int salaryIn, String positionIn, String[] scheduleIn){
+        super(firstNameIn, lastNameIn);
+        this.salary = salaryIn;
+        this.position = positionIn;
+        this.schedule = scheduleIn;
     }
 
     //Getters & Setters
@@ -21,16 +21,16 @@ public class Employee extends Person{
         return salary;
     }
 
-    public void setSalary(int salary){
-        this.salary = salary;
+    public void setSalary(int salaryIn){
+        this.salary = salaryIn;
     }
 
     public String getPosition(){
         return position;
     }
 
-    public void setPosition(String position){
-        this.position = position;
+    public void setPosition(String positionIn){
+        this.position = positionIn;
     }
 
     public String[] getSchedule(){

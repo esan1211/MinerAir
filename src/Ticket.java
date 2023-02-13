@@ -10,11 +10,11 @@ public class Ticket {
 
     }
 
-    public Ticket(int price, int numSeats, int confirmationNum, int amount){
-        this.price = price;
-        this.numSeats = numSeats;
-        this.confirmationNum = confirmationNum;
-        this.amount = amount;
+    public Ticket(int priceIn, int numSeatsIn, int confirmationNumIn, int amountIn){
+        this.price = priceIn;
+        this.numSeats = numSeatsIn;
+        this.confirmationNum = confirmationNumIn;
+        this.amount = amountIn;
     }
 
     //Getters & Setters
@@ -22,32 +22,32 @@ public class Ticket {
         return price;
     }
 
-    public void setPrice(int price){
-        this.price = price;
+    public void setPrice(int priceIn){
+        this.price = priceIn;
     }
 
     public int getNumSeats(){
         return numSeats;
     }
 
-    public void setNumSeats(int numSeats){
-        this.numSeats = numSeats;
+    public void setNumSeats(int numSeatsIn){
+        this.numSeats = numSeatsIn;
     }
 
     public int getConfirmationNum(){
         return confirmationNum;
     }
 
-    public void setConfirmationNum(int confirmationNum){
-        this.confirmationNum = confirmationNum;
+    public void setConfirmationNum(int confirmationNumIn){
+        this.confirmationNum = confirmationNumIn;
     }
 
     public int getAmount(){
         return amount;
     }
 
-    public void setAmount(int amount){
-        this.amount = amount;
+    public void setAmount(int amountIn){
+        this.amount = amountIn;
     }
   
 }
