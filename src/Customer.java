@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+
 public class Customer extends Person{
     //Attributes
     private String id;
     private String username;
     private String password;
-    private int numTickets = 0;
+    private ArrayList<Ticket> ticketsPurchased = new ArrayList<Ticket>();
     private double money;
     
     //Constructors
@@ -11,12 +13,11 @@ public class Customer extends Person{
 
     }
 
-    public Customer(String firstName, String lastName, String id, String username, String password, int numTickets, double money) {
+    public Customer(String firstName, String lastName, String id, String username, String password, double money) {
         super(firstName, lastName);
         this.id = id;
         this.username = username;
         this.password = password;
-        this.numTickets = numTickets;
         this.money = money;
     }
 
@@ -37,12 +38,12 @@ public class Customer extends Person{
         this.password = password;
     }
 
-    public int getNumTickets(){
-        return numTickets;
+    public ArrayList<Ticket> getTicketsPurchased(){
+        return ticketsPurchased;
     }
 
-    public void setNumTickets(int numTickets){
-        this.numTickets = numTickets;
+    public void setTicketsPurchased(ArrayList<Ticket> ticketsPurchased){
+        this.ticketsPurchased = ticketsPurchased;
     }
 
     public double getMoney(){

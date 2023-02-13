@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Flight {
     //Attributes
     private String originAirport;
@@ -21,6 +23,7 @@ public class Flight {
     private int firstClassSeats;
     private int businessClassSeats;
     private int mainCabinSeats;
+    private ArrayList<Ticket> ticketList = new ArrayList<Ticket>();
     
     //Constructors
     public Flight(){
@@ -203,6 +206,26 @@ public class Flight {
         this.mainCabinPrice = mainCabinPriceIn;
     }
 
+    public void setTotalSeats(int totalSeatsIn){
+        this.totalSeats = totalSeatsIn;
+    }
+
+    public void setFirstClassSeats(int firstClassSeatsIn){
+        this.firstClassSeats = firstClassSeatsIn;
+    }
+
+    public void setBusinessClassSeats(int businessClassSeatsIn){
+        this.businessClassSeats = businessClassSeatsIn;
+    }
+
+    public void setMainCabinSeats(int mainCabinSeatsIn){
+        this.mainCabinSeats = mainCabinSeatsIn;
+    }
+
+    public void setTicketList(ArrayList<Ticket> ticketListIn){
+        this.ticketList = ticketListIn;
+    }
+
     //Getters
     public String getOriginAirport(){
         return this.originAirport;
@@ -282,6 +305,10 @@ public class Flight {
 
     public String getID(){
         return this.id;
+    }
+
+    public ArrayList<Ticket> getTicketList(){
+        return this.ticketList;
     }
 
     public void printFlight(){ //Prints attributes of obj
