@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Flight {
+public abstract class Flight {
     //Attributes
     private String originAirport;
     private String originCode;
@@ -30,14 +30,14 @@ public class Flight {
 
     }
 
-    public Flight(String idIn, String flightNumberIn, String originAirportIn, String originCodeIn, String destinationAirportIn, String destinationCodeIn, String depratingDateIn, String departingTimeIn, int durationIn, int distanceIn, int timeZoneDifferenceIn, String arrivalDateIn, String arrivalTimeIn, int totalSeatsIn, int firstClassSeatsIn, int businessClassSeatsIn, int mainCabinSeatsIn, int firstClassPriceIn, int businessClassPriceIn, int mainCabinPriceIn){
+    public Flight(String idIn, String flightNumberIn, String originAirportIn, String originCodeIn, String destinationAirportIn, String destinationCodeIn, String departingDateIn, String departingTimeIn, int durationIn, int distanceIn, int timeZoneDifferenceIn, String arrivalDateIn, String arrivalTimeIn, int totalSeatsIn, int firstClassSeatsIn, int businessClassSeatsIn, int mainCabinSeatsIn, int firstClassPriceIn, int businessClassPriceIn, int mainCabinPriceIn){
         this.id = idIn;
         this.flightNumber = flightNumberIn;
         this.originAirport = originAirportIn;
         this.originCode = originCodeIn;
         this.destinationAirport = destinationAirportIn;
         this.destinationCode = destinationCodeIn;
-        this.departureDate = depratingDateIn;
+        this.departureDate = departingDateIn;
         this.departureTime = departingTimeIn;
         this.duration = durationIn;
         this.distance = distanceIn;
