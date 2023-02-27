@@ -21,34 +21,24 @@ import java.util.Random;
 
 public class RunFlight{
     public static void main(String[] args){
-        HashMap<String,Customer> customerMap = new HashMap<String,Customer>();
+        //Initializes database for domestic and international flights, including customers and employees
         GenerateDatabase database = new GenerateDatabase();
         database.setDomesticInternationMap();
         database.setPeopleMap();
-        System.out.println(database.customerMap);
 
-        
-
-        /*for (Map.Entry<String,International> mapElement : internationalFlightMap.entrySet()) {
-            String key = mapElement.getKey();
- 
-            // Adding some bonus marks to all the students
-            International value = (mapElement.getValue());
-            value.printFlight();
-            // Printing above marks corresponding to
-            // students names
-            System.out.println(key + " : " + value);
-        }*/
         
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         
         //User Interaction
         while(!userInput.toLowerCase().equals("exit")){
-            String customerName = loginMenu(customerMap);
-            if(customerMap.containsKey(customerName)){
+            String currentUser = loginMenu(database.getCustomerMap(),database.getEmployeeMap());
+            System.out.println(currentUser);
+            if(database.getCustomerMap().containsKey(currentUser)){
                 //flightMenu(customerMap, customerName);
-                System.out.println("Hi");
+            }
+            else if(database.getEmployeeMap().containsKey(currentUser)){
+                System.out.println("Hello Employee");
             }
             System.out.println("\nYou have been logged out of your account.\nType 'Exit' if you wish to end the program, or type 'Enter' to login again.\n");
             userInput = scnr.nextLine();
@@ -57,27 +47,27 @@ public class RunFlight{
     }
 
     //User Login Interaction Method
-    public static String loginMenu(HashMap<String,Customer> customerMap){
+    public static String loginMenu(HashMap<String,Customer> customerMap, HashMap<String,Employee> employeeMap){
         Scanner scnr = new Scanner(System.in);
         System.out.println("\nHello Welcome to MinerAir, are you an individual customer?");
         String userInput = scnr.nextLine();
-        String customerName = "";
+        String currUser = "";
         if(userInput.toLowerCase().equals("yes")){
-            while(!customerMap.containsKey(customerName)){
+            while(!customerMap.containsKey(currUser)){
                 System.out.println("\nPlease enter your first and last name. Example: John Doe");
-                customerName = scnr.nextLine();
-                if(customerMap.containsKey(customerName)){
+                currUser = scnr.nextLine();
+                if(customerMap.containsKey(currUser)){
                     System.out.println("\nPlease enter your account's username");
-                    while(!customerMap.get(customerName).getUsername().equals(userInput)){
+                    while(!customerMap.get(currUser).getUsername().equals(userInput)){
                         userInput = scnr.nextLine();
-                        if(customerMap.get(customerName).getUsername().equals(userInput)){
+                        if(customerMap.get(currUser).getUsername().equals(userInput)){
                             int numOfTries = 0; //Number of tries before user gets logged out because of incorrect password attempts
                             while(numOfTries < 3){
                                 System.out.println("Please enter your password.");
                                 userInput = scnr.nextLine();
-                                if(customerMap.get(customerName).getPassword().equals(userInput)){
-                                    System.out.println("\nWelcome " + customerName + "! \n");
-                                    return customerName;
+                                if(customerMap.get(currUser).getPassword().equals(userInput)){
+                                    System.out.println("\nWelcome " + currUser + "! \n");
+                                    return currUser;
                                 }
                                 numOfTries++;    
                             }
@@ -93,9 +83,37 @@ public class RunFlight{
                 }
             }
         }else{
-            System.out.println("Sorry, this system is for individual customers only.");    
+            while(!employeeMap.containsKey(currUser)){
+                System.out.println("\nPlease enter your first and last name. Example: John Doe");
+                currUser = scnr.nextLine();
+                if(employeeMap.containsKey(currUser)){
+                    System.out.println("\nPlease enter your account's username");
+                    while(!employeeMap.get(currUser).getUsername().equals(userInput)){
+                        userInput = scnr.nextLine();
+                        if(employeeMap.get(currUser).getUsername().equals(userInput)){
+                            int numOfTries = 0; //Number of tries before user gets logged out because of incorrect password attempts
+                            while(numOfTries < 3){
+                                System.out.println("Please enter your password.");
+                                userInput = scnr.nextLine();
+                                if(employeeMap.get(currUser).getPassword().equals(userInput)){
+                                    System.out.println("\nWelcome " + currUser + "! \n");
+                                    return currUser;
+                                }
+                                numOfTries++;    
+                            }
+                            System.out.println("Max number of password attempts has been reached please try again later.");
+                            return "";
+                        }
+                        else{
+                            System.out.println("Incorrect username, please try again.");
+                        }   
+                    }
+                }else{
+                    System.out.println("Unfortunately, this name is not in our database. Please try again.");
+                }
+            }
         }
-        return "";     
+        return "";
     }
 
     //User Flight Menu Interaction Method
