@@ -33,12 +33,13 @@ public class RunFlight{
         //User Interaction
         while(!userInput.toLowerCase().equals("exit")){
             String currentUser = loginMenu(database.getCustomerMap(),database.getEmployeeMap());
+            String currFlightID;
             System.out.println(currentUser);
             if(database.getCustomerMap().containsKey(currentUser)){
-                //flightMenu(customerMap, customerName);
+                currFlightID = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
             }
             else if(database.getEmployeeMap().containsKey(currentUser)){
-                System.out.println("Hello Employee");
+                currFlightID = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
             }
             System.out.println("\nYou have been logged out of your account.\nType 'Exit' if you wish to end the program, or type 'Enter' to login again.\n");
             userInput = scnr.nextLine();
@@ -112,6 +113,23 @@ public class RunFlight{
                     System.out.println("Unfortunately, this name is not in our database. Please try again.");
                 }
             }
+        }
+        return "";
+    }
+
+    public static String searchFlights(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap){
+        System.out.println("Enter the Flight ID of a specific flight.");
+        Scanner scnr = new Scanner(System.in);
+        String userInput = "";
+        boolean flightExist = false;
+        while(!flightExist){
+            scnr.nextLine();
+            if(internationalMap.containsKey(userInput)){
+                return String.valueOf(userInput);
+            }else if(domesticMap.containsKey(userInput)){
+                return String.valueOf(userInput);
+            }
+            System.out.println("Incorrect Flight ID, please try again.");
         }
         return "";
     }
