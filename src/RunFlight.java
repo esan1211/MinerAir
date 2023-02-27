@@ -22,25 +22,23 @@ import java.util.Random;
 public class RunFlight{
     public static void main(String[] args){
         HashMap<String,Customer> customerMap = new HashMap<String,Customer>();
+        GenerateDatabase database = new GenerateDatabase();
+        database.setDomesticInternationMap();
+        database.setPeopleMap();
+        System.out.println(database.customerMap);
+
         
 
-        //File Reading for Customer Schedule
-        try{
-            BufferedReader buffReader = new BufferedReader(new FileReader("CustomerListPA1.csv"));
-            String line = buffReader.readLine();
-            ArrayList<String> lines = new ArrayList<>();
-            while ((line = buffReader.readLine()) != null){
-                lines.add(line);
-            }
-            //Populates a HashMap of Customers 
-            for(int i = 0; i < lines.size(); i++){ //Traverses through every line in csv ArrayList and creates a string array to split by commas and add new Flight obj to Flights ArrayList
-                String[] readCustomers = lines.get(i).split(",");
-                customerMap.put(readCustomers[1] + " " + readCustomers[2], new Customer(readCustomers[1], readCustomers[2], readCustomers[0], readCustomers[6], readCustomers[7], Double.valueOf(readCustomers[3])));
-            }
-            buffReader.close();
-        }catch(IOException e){
-            System.out.println("The file cannot be found.");
-        }
+        /*for (Map.Entry<String,International> mapElement : internationalFlightMap.entrySet()) {
+            String key = mapElement.getKey();
+ 
+            // Adding some bonus marks to all the students
+            International value = (mapElement.getValue());
+            value.printFlight();
+            // Printing above marks corresponding to
+            // students names
+            System.out.println(key + " : " + value);
+        }*/
         
         Scanner scnr = new Scanner(System.in);
         String userInput = "";

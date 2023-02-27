@@ -2,42 +2,20 @@ import java.util.ArrayList;
 
 public class Customer extends Person{
     //Attributes
-    private String id;
-    private String username;
-    private String password;
     private ArrayList<Ticket> ticketsPurchased = new ArrayList<Ticket>();
-    private double money;
+    private int flightsPurchased;
     
     //Constructors
     public Customer(){
 
     }
 
-    public Customer(String firstNameIn, String lastNameIn, String idIn, String usernameIn, String passwordIn, double moneyIn) {
-        super(firstNameIn, lastNameIn);
-        this.id = idIn;
-        this.username = usernameIn;
-        this.password = passwordIn;
-        this.money = moneyIn;
+    public Customer(String idIn, String firstNameIn, String lastNameIn, String dateOfBirthIn, String roleIn, double moneyIn, int flightsPurchasedIn, boolean minerAirMembershipIn, String usernameIn, String passwordIn){
+        super(idIn, firstNameIn, lastNameIn, dateOfBirthIn, roleIn, moneyIn, minerAirMembershipIn, usernameIn, passwordIn);
+        this.flightsPurchased = flightsPurchasedIn;
     }
 
     //Getters & Setters
-    public String getUsername(){
-        return username;
-    }
-
-    public void setUsername(String usernameIn){
-        this.username = usernameIn;
-    }
-
-    public String getPassword(){
-        return password;
-    }
-
-    public void setPassword(String passwordIn){
-        this.password = passwordIn;
-    }
-
     public ArrayList<Ticket> getTicketsPurchased(){
         return ticketsPurchased;
     }
@@ -46,12 +24,13 @@ public class Customer extends Person{
         this.ticketsPurchased = ticketsPurchasedIn;
     }
 
-    public double getMoney(){
-        return money;
+    public int getFlightsPurchased(){
+        return flightsPurchased;
     }
 
-    public void setMoney(double moneyIn){
-        this.money = moneyIn;
+    public void setFlightsPurchased(int flightsPurchased){
+        this.flightsPurchased = flightsPurchased;
     }
+
     
 }

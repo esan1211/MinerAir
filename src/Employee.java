@@ -9,11 +9,8 @@ public class Employee extends Person{
     
     }
 
-    public Employee(String firstNameIn, String lastNameIn, int salaryIn, String positionIn, String[] scheduleIn){
-        super(firstNameIn, lastNameIn);
-        this.salary = salaryIn;
-        this.position = positionIn;
-        this.schedule = scheduleIn;
+    public Employee(String idIn, String firstNameIn, String lastNameIn, String dateOfBirthIn, String roleIn, double moneyIn, boolean minerAirMembershipIn, String usernameIn, String passwordIn){
+        super(idIn, firstNameIn, lastNameIn, dateOfBirthIn, roleIn, moneyIn, minerAirMembershipIn, usernameIn, passwordIn);
     }
 
     //Getters & Setters
