@@ -7,7 +7,7 @@ public class GenerateDatabase{
     private HashMap<String,Domestic> domesticFlightMap;
     private HashMap<String,International> internationalFlightMap;
     private HashMap<String,Customer> customerMap;
-    private HashMap<String,Employee> employeMap;
+    private HashMap<String,Employee> employeeMap;
 
     public GenerateDatabase(){
 
@@ -48,7 +48,7 @@ public class GenerateDatabase{
         //Sets up customer & employee map
         public void setPeopleMap(){
             HashMap<String,Customer> customerMap = new HashMap<String,Customer>();
-            HashMap<String,Employee> employeMap = new HashMap<String,Employee>();
+            HashMap<String,Employee> employeeMap = new HashMap<String,Employee>();
             //File Reading for Customer Schedule
             try{
                 BufferedReader buffReader = new BufferedReader(new FileReader("CustomerListPA2.csv"));
@@ -64,11 +64,11 @@ public class GenerateDatabase{
                     if(readPeople[4].equals("Customer")){
                         customerMap.put(readPeople[1] + " " + readPeople[2], new Customer(readPeople[0], readPeople[1], readPeople[2], readPeople[3], readPeople[4], Double.valueOf(readPeople[5]), Integer.valueOf(readPeople[6]), Boolean.valueOf(readPeople[7]), readPeople[8], readPeople[9]));
                     }else{
-                        employeMap.put(readPeople[1] + " " + readPeople[2], new Employee(readPeople[0], readPeople[1], readPeople[2], readPeople[3], readPeople[4], Double.valueOf(readPeople[5]), Boolean.valueOf(readPeople[7]), readPeople[8], readPeople[9]));
+                        employeeMap.put(readPeople[1] + " " + readPeople[2], new Employee(readPeople[0], readPeople[1], readPeople[2], readPeople[3], readPeople[4], Double.valueOf(readPeople[5]), Boolean.valueOf(readPeople[7]), readPeople[8], readPeople[9]));
                     }
                 }
                 this.customerMap = customerMap;
-                this.employeMap = employeMap;
+                this.employeeMap = employeeMap;
                 buffReader.close();
             }catch(IOException e){
                 System.out.println("The file cannot be found.");
@@ -87,8 +87,8 @@ public class GenerateDatabase{
             return customerMap;
         }
 
-        public HashMap<String, Employee> getEmployeMap(){
-            return employeMap;
+        public HashMap<String, Employee> getEmployeeMap(){
+            return employeeMap;
         }
     
 }
