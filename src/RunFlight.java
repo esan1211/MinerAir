@@ -1,7 +1,7 @@
 /* Enrique Munoz
- * 2/7/2023
+ * 2/28/2023
  * Adv. Object Oriented Programming CS3331, Dr. Mejia
- * Programming Assignment 1
+ * Programming Assignment 2
  * Uses Object-Oriented programming design in order to create a flight system with interacting customers
  * This work is to be done individually. It is not permitted to share, reproduce, or alter
     any part of this assignment for any purpose. Students are not permitted from
@@ -25,21 +25,45 @@ public class RunFlight{
         GenerateDatabase database = new GenerateDatabase();
         database.setDomesticInternationMap();
         database.setPeopleMap();
-
         
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         
         //User Interaction
         while(!userInput.toLowerCase().equals("exit")){
-            String currentUser = loginMenu(database.getCustomerMap(),database.getEmployeeMap());
+            //String currentUser = loginMenu(database.getCustomerMap(),database.getEmployeeMap()); //Erase later
+            String currentUser = scnr.nextLine();
             String currFlightID;
-            System.out.println(currentUser);
+            String typeOfFlight;
+            System.out.println("Welcome " + currentUser + "!\n");
             if(database.getCustomerMap().containsKey(currentUser)){
-                currFlightID = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
-            }
-            else if(database.getEmployeeMap().containsKey(currentUser)){
-                currFlightID = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
+                while(!userInput.toLowerCase().equals("back")){
+                    System.out.println("\nWhich menu would you like to access.\n1. Purchase Menu \n2. Ticket Cancel Menu \nType 'Back' to logout of your account.\n");
+                    userInput = scnr.nextLine();
+                    if(userInput.equals("1")){
+                        String[] idAndFlightType = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
+                        currFlightID = idAndFlightType[0];
+                        typeOfFlight = idAndFlightType[1];
+                        purchaseMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser, currFlightID, typeOfFlight);
+                    }else if(userInput.equals("2")){
+                        cancelTicket(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser);
+                    }
+                }
+            }else if(database.getEmployeeMap().containsKey(currentUser)){
+                while(!userInput.toLowerCase().equals("back")){
+                    String[] idAndFlightType = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
+                    currFlightID = idAndFlightType[0];
+                    typeOfFlight = idAndFlightType[1];
+                    while(!userInput.toLowerCase().equals("back")){
+                        System.out.println("\nWhich menu would you like to access.\n1.View Flight Information \n2.Flight Cancel Menu \n3.Flight Revenue MenuType\nType 'Back' to search for another Flight ID.\n");
+                        userInput = scnr.nextLine();
+                        if(userInput.equals("1")){
+                            viewFlight(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight);
+                        }else if(userInput.equals("2")){
+                            cancelTicket(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser);
+                        }
+                    }
+                }
             }
             System.out.println("\nYou have been logged out of your account.\nType 'Exit' if you wish to end the program, or type 'Enter' to login again.\n");
             userInput = scnr.nextLine();
@@ -117,131 +141,417 @@ public class RunFlight{
         return "";
     }
 
-    public static String searchFlights(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap){
+    public static String[] searchFlights(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap){
         System.out.println("Enter the Flight ID of a specific flight.");
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         boolean flightExist = false;
+        String[] result = new String[2];
         while(!flightExist){
-            scnr.nextLine();
+            userInput = scnr.nextLine();
             if(internationalMap.containsKey(userInput)){
-                return String.valueOf(userInput);
+                result[0] = String.valueOf(userInput);
+                result[1] = "International";
+                return result;
             }else if(domesticMap.containsKey(userInput)){
-                return String.valueOf(userInput);
+                result[0] = String.valueOf(userInput);
+                result[1] = "Domestic";
+                return result;
             }
             System.out.println("Incorrect Flight ID, please try again.");
         }
-        return "";
+        return result;
     }
 
     //User Flight Menu Interaction Method
-    /*public static void flightMenu(HashMap<String,Flight> internationalMap, HashMap<String,Flight> domesticMap, HashMap<String,Customer> customerMap, String customerName){
+    public static void purchaseMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String customerName, String flightID, String flightType){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
-        BufferedWriter buffWriter;
-        try{
-            buffWriter = new BufferedWriter(new FileWriter("Log.txt."));
-            while(!userInput.toLowerCase().equals("exit")){
-                System.out.println("Enter the Flight ID of a specific flight.\n\nType 'Exit' if you'd like to exit the Main Menu.\n");
-                userInput = scnr.nextLine();
-                if(internationalMap.containsKey(userInput)){
-                    String flightAccessed = userInput;
-                    buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + "\n");
-                    while(!userInput.toLowerCase().equals("back")){
-                        System.out.println("\nHere's information about this flight.");
-                        internationalMap.get(flightAccessed).printFlight();
-                        System.out.println("\nEnter the number for the type of ticket you would like to purchase.\n1. First Class $" + internationalMap.get(flightAccessed).getFirstClassPrice() +"\n2. Business Class $" + in.get(flightAccessed).getBusinessClassPrice() + "\n3. Main Cabin $" + flightMap.get(flightAccessed).getMainCabinPrice() + "\n\nOr type 'Back' in order to go back to the Main Menu.\n");
-                        userInput = scnr.nextLine();
-                        int numTickets = 0;
-                        int totalPrice = 0;
-                        Random random = new Random();
-                        int confirmationNum = random.nextInt(1000000); //Generates random confirmation number
-                        switch(userInput){
-                            case "1": //First Class Interaction
-                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", accessed First Class Seat Prices.\n");
-                                System.out.println("How many First Class Tickets do you want to buy?");
-                                numTickets = scnr.nextInt();
-                                scnr.nextLine(); //Skips line since previous line was int
-                                if(numTickets < 1 || numTickets > 6){
-                                    System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
-                                    break;
-                                }
-                                if(numTickets > flightMap.get(flightAccessed).getFirstClassSeats()){
-                                    System.out.println("There is not enough seats in this section, try looking for another section.");
-                                }
-                                totalPrice = numTickets * flightMap.get(flightAccessed).getFirstClassPrice();
-                                if(customerMap.get(customerName).getMoney() - totalPrice < 0){
-                                    System.out.println("Sorry, but you do not have enough money for this purchase");
-                                    break;
-                                }
-                                flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
-                                flightMap.get(flightAccessed).setFirstClassSeats((flightMap.get(flightAccessed).getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
-                                customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
-                                customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the arraylist of tickets in the custmer obj
-                                flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
-                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", bought " + numTickets + " First Class Seats.\n");
-                                System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
+        Customer currUser = customerMap.get(customerName);
+        while(!userInput.toLowerCase().equals("exit")){
+            //Domestic Flight Purchase Menu
+            if(flightType.equals("Domestic")){
+                Domestic currDomesticFlight = domesticMap.get(flightID);
+                System.out.println("\nFlight ID: " + flightID + ", " + currDomesticFlight.getOriginAirport() + " to " + currDomesticFlight.getDestinationAirport());
+                while(!userInput.toLowerCase().equals("back")){
+                    System.out.println("\nEnter the number for the type of ticket you would like to purchase.\n1. First Class $" + currDomesticFlight.getFirstClassPrice() + "\n2. Business Class $" + currDomesticFlight.getBusinessClassPrice() + "\n3. Main Cabin $" + currDomesticFlight.getMainCabinPrice() + "\n\nOr type 'Back' in order to go back to the Purchase Menu.\n");
+                    int numTickets = 0;
+                    int totalPrice = 0;
+                    Random random = new Random();
+                    int confirmationNum = random.nextInt(1000000); //Generates random confirmation number
+                    userInput = scnr.nextLine();
+                    switch(userInput){
+                        case "1": //First Class Interaction
+                            System.out.println("How many First Class Tickets do you want to buy?");
+                            numTickets = scnr.nextInt();
+                            scnr.nextLine(); //Skips line since previous line was int
+                            if(numTickets < 1 || numTickets > 8){
+                                System.out.println("Only 1-8 number of tickets are purchasable per transaction.");
                                 break;
-                            case "2": //Business Class Interaction
-                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", accessed Business Class Seat Prices.\n");
-                                System.out.println("How many Business Class Tickets do you want to buy?");
-                                numTickets = scnr.nextInt();
-                                scnr.nextLine(); //Skips line since previous line was int
-                                if(numTickets < 1 || numTickets > 6){
-                                    System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
-                                    break;
-                                }
-                                if(numTickets > flightMap.get(flightAccessed).getBusinessSeats()){
-                                    System.out.println("There is not enough seats in this section, try looking for another section.");
-                                }
-                                totalPrice = numTickets * flightMap.get(flightAccessed).getBusinessClassPrice();
-                                if(customerMap.get(customerName).getMoney() - totalPrice < 0){
-                                    System.out.println("Sorry, but you do not have enough money for this purchase");
-                                    break;
-                                }
-                                flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
-                                flightMap.get(flightAccessed).setBusinessClassSeats((flightMap.get(flightAccessed).getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
-                                customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
-                                customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in the custmer obj
-                                flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
-                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", bought " + numTickets + " Business Class Seats.\n");
-                                System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
+                            }
+                            if(numTickets > currDomesticFlight.getFirstClassSeats()){
+                                System.out.println("There is not enough seats in this section, try looking for another section.");
+                            }
+                            totalPrice = numTickets * currDomesticFlight.getFirstClassPrice();
+                            if(currUser.getMoney() - totalPrice < 0){
+                                System.out.println("Sorry, but you do not have enough money for this purchase");
                                 break;
-                            case "3": //Main Cabin Interaction
-                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", accessed Main Cabin Seat Prices.\n");
-                                System.out.println("How many Main Cabin Tickets do you want to buy?");
-                                numTickets = scnr.nextInt();
-                                scnr.nextLine(); //Skips line since previous line was int
-                                if(numTickets < 1 || numTickets > 6){
-                                    System.out.println("Only 1-6 number of tickets are purchasable per transaction.");
-                                    break;
+                            }
+                            System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
+                            userInput = scnr.nextLine();
+                            if(userInput.toLowerCase().equals("confirm")){
+                                currDomesticFlight.setTotalSeats(currDomesticFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                currDomesticFlight.setFirstClassSeats((currDomesticFlight.getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
+                                currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                boolean flightAlreadyAdded = false; //Variable to see if flight was already purchased
+                                for(int i = 0; i < currUser.getTicketsPurchased().size();i++){ //Updates the flight purchased attribute of Customer
+                                    if(currUser.getTicketsPurchased().get(i).getFlightID().equals(flightID)){
+                                        flightAlreadyAdded = true;
+                                    }  
                                 }
-                                if(numTickets > flightMap.get(flightAccessed).getMainCabinSeats()){
-                                    System.out.println("There is not enough seats in this section, try looking for another section.");
+                                currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the arraylist of tickets in the custmer obj
+                                currDomesticFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                if(!flightAlreadyAdded){
+                                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
-                                totalPrice = numTickets * flightMap.get(flightAccessed).getMainCabinPrice();
-                                if(customerMap.get(customerName).getMoney() - totalPrice < 0){
-                                    System.out.println("Sorry, but you do not have enough money for this purchase");
-                                    break;
-                                }
-                                flightMap.get(flightAccessed).setTotalSeats(flightMap.get(flightAccessed).getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
-                                flightMap.get(flightAccessed).setMainCabinSeats((flightMap.get(flightAccessed).getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
-                                customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() - totalPrice); //Subtracts total purchase price from users money amount
-                                customerMap.get(customerName).getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in the custmer obj
-                                flightMap.get(flightAccessed).getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets)); //Adds ticket object to the ArrayList of tickets in flight obj
-                                buffWriter.write("User: " + customerMap.get(customerName).getUsername() + " accessed Flight ID " + flightAccessed + ", bought " + numTickets + " Main Cabin Seats.\n");
-                                System.out.println("Your account balance after this transaction is $" +customerMap.get(customerName).getMoney());
+                                System.out.println("Your account balance after this transaction is $" +currUser.getMoney());
+                            }else{
+                                System.out.println("The payment process has been stopped.");
+                            }
+                            break;
+                        case "2": //Business Class Interaction
+                            System.out.println("How many Business Class Tickets do you want to buy?");
+                            numTickets = scnr.nextInt();
+                            scnr.nextLine(); //Skips line since previous line was int
+                            if(numTickets < 1 || numTickets > 8){
+                                System.out.println("Only 1-8 number of tickets are purchasable per transaction.");
                                 break;
-                        }
+                            }
+                            if(numTickets > currDomesticFlight.getBusinessSeats()){
+                                System.out.println("There is not enough seats in this section, try looking for another section.");
+                            }
+                            totalPrice = numTickets * currDomesticFlight.getBusinessClassPrice();
+                            if(currUser.getMoney() - totalPrice < 0){
+                                System.out.println("Sorry, but you do not have enough money for this purchase");
+                                break;
+                            }
+                            System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
+                            userInput = scnr.nextLine();
+                            if(userInput.toLowerCase().equals("confirm")){
+                                currDomesticFlight.setTotalSeats(currDomesticFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                currDomesticFlight.setBusinessClassSeats((currDomesticFlight.getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
+                                currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                boolean flightAlreadyAdded = false; //Variable to see if flight was already purchased
+                                for(int i = 0; i < currUser.getTicketsPurchased().size();i++){ //Updates the flight purchased attribute of Customer
+                                    if(currUser.getTicketsPurchased().get(i).getFlightID().equals(flightID)){
+                                        flightAlreadyAdded = true;
+                                    }  
+                                }
+                                currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
+                                currDomesticFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                if(!flightAlreadyAdded){
+                                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
+                                }
+                                System.out.println("Your account balance after this transaction is $" +currUser.getMoney());
+                            }else{
+                                System.out.println("The payment process has been stopped.");
+                            }
+                        case "3": //Main Cabin Interaction
+                            System.out.println("How many Main Cabin Tickets do you want to buy?");
+                            numTickets = scnr.nextInt();
+                            scnr.nextLine(); //Skips line since previous line was int
+                            if(numTickets < 1 || numTickets > 8){
+                                System.out.println("Only 1-8 number of tickets are purchasable per transaction.");
+                                break;
+                            }
+                            if(numTickets > currDomesticFlight.getMainCabinSeats()){
+                                System.out.println("There is not enough seats in this section, try looking for another section.");
+                            }
+                            totalPrice = numTickets * currDomesticFlight.getMainCabinPrice();
+                            if(currUser.getMoney() - totalPrice < 0){
+                                System.out.println("Sorry, but you do not have enough money for this purchase");
+                                break;
+                            }
+                            System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
+                            userInput = scnr.nextLine();
+                            if(userInput.toLowerCase().equals("confirm")){
+                                currDomesticFlight.setTotalSeats(currDomesticFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                currDomesticFlight.setMainCabinSeats((currDomesticFlight.getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
+                                currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                boolean flightAlreadyAdded = false; //Variable to see if flight was already purchased
+                                for(int i = 0; i < currUser.getTicketsPurchased().size();i++){ //Updates the flight purchased attribute of Customer
+                                    if(currUser.getTicketsPurchased().get(i).getFlightID().equals(flightID)){
+                                        flightAlreadyAdded = true;
+                                    }  
+                                }
+                                currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
+                                currDomesticFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                if(!flightAlreadyAdded){
+                                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
+                                }
+                                System.out.println("Your account balance after this transaction is $" +currUser.getMoney());
+                            }else{
+                                System.out.println("The payment process has been stopped.");
+                            }
+                            break;
                     }
-                }else if(!userInput.toLowerCase().equals("exit")){
-                    System.out.println("This flight does not exist, try again.");
-                }      
+                }
+            //International Flight Purchase Menu
+            }else if(flightType.equals("International")){
+                International currInternationalFlight = internationalMap.get(flightID);
+                System.out.println("\nFlight ID: " + flightID + ", " + currInternationalFlight.getOriginAirport() + " to " + currInternationalFlight.getDestinationAirport());
+                while(!userInput.toLowerCase().equals("back")){
+                    System.out.println("\nEnter the number for the type of ticket you would like to purchase.\n1. First Class $" + currInternationalFlight.getFirstClassPrice() + "\n2. Business Class $" + currInternationalFlight.getBusinessClassPrice() + "\n3. Main Cabin $" + currInternationalFlight.getMainCabinPrice() + "\n\nOr type 'Back' in order to go back to the Purchase Menu.\n");
+                    int numTickets = 0;
+                    int totalPrice = 0 + currInternationalFlight.getSurcharge();
+                    System.out.println("This flight is an International Flight and has a surcharge of $" + totalPrice + ".\n");
+                    Random random = new Random();
+                    int confirmationNum = random.nextInt(1000000); //Generates random confirmation number
+                    userInput = scnr.nextLine();
+                    switch(userInput){
+                        case "1": //First Class Interaction
+                            System.out.println("How many First Class Tickets do you want to buy?");
+                            numTickets = scnr.nextInt();
+                            scnr.nextLine(); //Skips line since previous line was int
+                            if(numTickets < 1 || numTickets > 8){
+                                System.out.println("Only 1-8 number of tickets are purchasable per transaction.");
+                                break;
+                            }
+                            if(numTickets > currInternationalFlight.getFirstClassSeats()){
+                                System.out.println("There is not enough seats in this section, try looking for another section.");
+                            }
+                            totalPrice += numTickets * currInternationalFlight.getFirstClassPrice();
+                            if(currUser.getMoney() - totalPrice < 0){
+                                System.out.println("Sorry, but you do not have enough money for this purchase");
+                                break;
+                            }
+                            System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
+                            userInput = scnr.nextLine();
+                            if(userInput.toLowerCase().equals("confirm")){
+                                currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                currInternationalFlight.setFirstClassSeats((currInternationalFlight.getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
+                                currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                boolean flightAlreadyAdded = false; //Variable to see if flight was already purchased
+                                for(int i = 0; i < currUser.getTicketsPurchased().size();i++){ //Updates the flight purchased attribute of Customer
+                                    if(currUser.getTicketsPurchased().get(i).getFlightID().equals(flightID)){
+                                        flightAlreadyAdded = true;
+                                    }  
+                                }
+                                currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the arraylist of tickets in the custmer obj
+                                currInternationalFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                if(!flightAlreadyAdded){
+                                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
+                                }
+                                System.out.println("Your account balance after this transaction is $" +currUser.getMoney());
+                            }else{
+                                System.out.println("The payment process has been stopped.");
+                            }
+                            break;
+                        case "2": //Business Class Interaction
+                            System.out.println("How many Business Class Tickets do you want to buy?");
+                            numTickets = scnr.nextInt();
+                            scnr.nextLine(); //Skips line since previous line was int
+                            if(numTickets < 1 || numTickets > 8){
+                                System.out.println("Only 1-8 number of tickets are purchasable per transaction.");
+                                break;
+                            }
+                            if(numTickets > currInternationalFlight.getBusinessSeats()){
+                                System.out.println("There is not enough seats in this section, try looking for another section.");
+                            }
+                            totalPrice += numTickets * currInternationalFlight.getBusinessClassPrice();
+                            if(currUser.getMoney() - totalPrice < 0){
+                                System.out.println("Sorry, but you do not have enough money for this purchase");
+                                break;
+                            }
+                            System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
+                            userInput = scnr.nextLine();
+                            if(userInput.toLowerCase().equals("confirm")){
+                                currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                currInternationalFlight.setBusinessClassSeats((currInternationalFlight.getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
+                                currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                boolean flightAlreadyAdded = false; //Variable to see if flight was already purchased
+                                for(int i = 0; i < currUser.getTicketsPurchased().size();i++){ //Updates the flight purchased attribute of Customer
+                                    if(currUser.getTicketsPurchased().get(i).getFlightID().equals(flightID)){
+                                        flightAlreadyAdded = true;
+                                    }  
+                                }
+                                currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
+                                currInternationalFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                if(!flightAlreadyAdded){
+                                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
+                                }
+                                System.out.println("Your account balance after this transaction is $" +currUser.getMoney());
+                            }else{
+                                System.out.println("The payment process has been stopped.");
+                            }
+                        case "3": //Main Cabin Interaction
+                            System.out.println("How many Main Cabin Tickets do you want to buy?");
+                            numTickets = scnr.nextInt();
+                            scnr.nextLine(); //Skips line since previous line was int
+                            if(numTickets < 1 || numTickets > 8){
+                                System.out.println("Only 1-8 number of tickets are purchasable per transaction.");
+                                break;
+                            }
+                            if(numTickets > currInternationalFlight.getMainCabinSeats()){
+                                System.out.println("There is not enough seats in this section, try looking for another section.");
+                            }
+                            totalPrice += numTickets * currInternationalFlight.getMainCabinPrice();
+                            if(currUser.getMoney() - totalPrice < 0){
+                                System.out.println("Sorry, but you do not have enough money for this purchase");
+                                break;
+                            }
+                            System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
+                            userInput = scnr.nextLine();
+                            if(userInput.toLowerCase().equals("confirm")){
+                                currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
+                                currInternationalFlight.setMainCabinSeats((currInternationalFlight.getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
+                                currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
+                                boolean flightAlreadyAdded = false; //Variable to see if flight was already purchased
+                                for(int i = 0; i < currUser.getTicketsPurchased().size();i++){ //Updates the flight purchased attribute of Customer
+                                    if(currUser.getTicketsPurchased().get(i).getFlightID().equals(flightID)){
+                                        flightAlreadyAdded = true;
+                                    }  
+                                }
+                                currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
+                                currInternationalFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                if(!flightAlreadyAdded){
+                                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
+                                }
+                                System.out.println("Your account balance after this transaction is $" +currUser.getMoney());
+                            }else{
+                                System.out.println("The payment process has been stopped.");
+                            }
+                            break;
+                    }
+                }
+
             }
-            buffWriter.close();
-        }catch(IOException e){
-            System.out.println("File not found.");
+            System.out.println("\nPlease type 'Exit' if you wish the leave the purchase menu or press 'Enter' to make another purchase.");
+            userInput = scnr.nextLine();
+            System.out.println("");
         }
-    }*/
+    }
+
+    //Ticket Cancel Method
+    public static void cancelTicket(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String customerName){
+        Scanner scnr = new Scanner(System.in);
+        String userInput = "";
+        Customer currUser = customerMap.get(customerName);
+        System.out.println(currUser.getFlightsPurchased());
+        if(currUser.getFlightsPurchased() == 0){ //Returns users if no tickets have been purchased
+            System.out.println("You have not purchased any tickets.\n");
+            return;
+        }
+        System.out.println("These are all of the Flight ID in which you have purchased tickets for.");
+        for(int i = 0; i < currUser.getTicketsPurchased().size(); i++){
+            System.out.println("Flight ID: " + currUser.getTicketsPurchased().get(i).getFlightID() + " Confirmation Number: " + currUser.getTicketsPurchased().get(i).getConfirmationNum());
+        }
+        System.out.println("\nWhich ticket would you like to cancel. Please type the ID and Confirmation Number. Example: 2 78951\nType 'Back' to exit out of this cancelation.\n");
+        userInput = scnr.nextLine();
+        int idxOfTicket = 0;
+        for(int i = 0; i < currUser.getTicketsPurchased().size(); i++){
+            if(userInput == String.valueOf(currUser.getTicketsPurchased().get(i).getFlightID() + " " + currUser.getTicketsPurchased().get(i).getConfirmationNum())){
+                idxOfTicket = i;
+            }
+        }
+        String currFlightID = currUser.getTicketsPurchased().get(idxOfTicket).getFlightID();
+        while(!userInput.toLowerCase().equals("exit")){
+            if(internationalMap.containsKey(currFlightID)){
+                System.out.println("Type 'confirm' you want to cancel this ticket or press 'Enter' to exit.");
+                userInput = scnr.nextLine();
+                if(userInput.toLowerCase().equals("confirm")){
+                    internationalMap.get(currFlightID).setFirstClassSeats(internationalMap.get(currFlightID).getFirstClassSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getFirstClassSeatsPurchased()); //Restores first class seats
+                    internationalMap.get(currFlightID).setBusinessClassSeats(internationalMap.get(currFlightID).getBusinessSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getBusinessClassSeatsPurchased()); //Restores business class seats
+                    internationalMap.get(currFlightID).setMainCabinSeats(internationalMap.get(currFlightID).getMainCabinSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getMainCabinSeatsPurchased()); //Restores main class seats
+                    internationalMap.get(currFlightID).setTotalSeats(internationalMap.get(currFlightID).getTotalSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getNumSeats()); //Restores total number of flight seats
+                    customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() + currUser.getTicketsPurchased().get(idxOfTicket).getPrice()); //Returns the users money
+                    customerMap.get(customerName).getTicketsPurchased().remove(idxOfTicket); //Removes ticket from customer inventory
+                    customerMap.get(customerName).setFlightsPurchased(customerMap.get(customerName).getFlightsPurchased()-1); //Updates customer flights purchased
+                    System.out.println(" ");
+                    break;
+                }else{
+                    break;
+                }
+            }else if(domesticMap.containsKey(currFlightID)){
+                System.out.println("Type 'confirm' you want to cancel this ticket or press 'Enter' to exit.");
+                userInput = scnr.nextLine();
+                if(userInput.toLowerCase().equals("confirm")){
+                    domesticMap.get(currFlightID).setFirstClassSeats(domesticMap.get(currFlightID).getFirstClassSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getFirstClassSeatsPurchased()); //Restores first class seats
+                    domesticMap.get(currFlightID).setBusinessClassSeats(domesticMap.get(currFlightID).getBusinessSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getBusinessClassSeatsPurchased()); //Restores business class seats
+                    domesticMap.get(currFlightID).setMainCabinSeats(domesticMap.get(currFlightID).getMainCabinSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getMainCabinSeatsPurchased()); //Restores main class seats
+                    domesticMap.get(currFlightID).setTotalSeats(domesticMap.get(currFlightID).getTotalSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getNumSeats()); //Restores total number of flight seats
+                    customerMap.get(customerName).setMoney(customerMap.get(customerName).getMoney() + currUser.getTicketsPurchased().get(idxOfTicket).getPrice()); //Returns the users money           
+                    customerMap.get(customerName).getTicketsPurchased().remove(idxOfTicket); //Removes ticket from customer inventory
+                    customerMap.get(customerName).setFlightsPurchased(customerMap.get(customerName).getFlightsPurchased()-1); //Updates customer flights purchased
+                    System.out.println(" ");
+                    break;
+                }else{
+                    break;
+                } 
+            }else{
+                System.out.println("That is not an available ID, please try again.");
+            }
+        }
+    }
+
+    //View Specific Flight Method
+    public static void viewFlight(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, String flightID, String flightType){
+        Scanner scnr = new Scanner(System.in);
+        String userInput = "";
+        if(flightType.equals("International")){
+            internationalMap.get(flightID).printFlight();
+            System.out.println("\nEnter the corresponding number to view a menu.\n1.Total Seats Remaining\n2.First Class Seats Remaining\n3.Business Class Seats Remaining\n4.Main Cabin Seats Remaining\n5.Customer Purchases\n");
+            userInput = scnr.nextLine();
+            switch(userInput){
+                case "1": //Check total seats remaining
+                    System.out.println("Total Seats Remaining: " + internationalMap.get(flightID).getTotalSeats());
+                    break;
+                case "2": //Check first class seats remaining
+                    System.out.println("First Class Seats Remaining: " + internationalMap.get(flightID).getFirstClassSeats());
+                    break;
+                case "3": //Check business class seats remaining
+                    System.out.println("Business Class Seats Remaining: " + internationalMap.get(flightID).getBusinessSeats());
+                    break;
+                case "4": //Check main cabin seats remaining
+                    System.out.println("Main Cabin Class Seats Remaining: " + internationalMap.get(flightID).getMainCabinSeats());
+                    break;
+                case "5": //Check customers
+                    ArrayList<Ticket> currTicketList = internationalMap.get(flightID).getTicketList();
+                    for(int i = 0; i < currTicketList.size(); i++){
+                        System.out.println("1." + currTicketList.get(i).getUser().getFirstName() + " " + currTicketList.get(i).getUser().getLastName() + "\n2.First Class Seats Purchased: " + currTicketList.get(i).getFirstClassSeatsPurchased() + "\n3.Business Class Seats Purchased: " + currTicketList.get(i).getBusinessClassSeatsPurchased() + "\n4.Main Cabin Seats Purchased: " + currTicketList.get(i).getMainCabinSeatsPurchased() + "\n5.Total Price $" + currTicketList.get(i).getPrice() + "\n");
+                    }
+                    break;
+            }
+        }else if(flightType.equals("Domestic")){
+            domesticMap.get(flightID).printFlight();
+            System.out.println("\nEnter the corresponding number to view a menu.\n1.Total Seats Remaining\n2.First Class Seats Remaining\n3.Business Class Seats Remaining\n4.Main Cabin Seats Remaining\n5.Customer Purchases\n");
+            userInput = scnr.nextLine();
+            switch(userInput){
+                case "1": //Check total seats remaining
+                    System.out.println("Total Seats Remaining: " + domesticMap.get(flightID).getTotalSeats());
+                    break;
+                case "2": //Check first class seats remaining
+                    System.out.println("First Class Seats Remaining: " + domesticMap.get(flightID).getFirstClassSeats());
+                    break;
+                case "3": //Check business class seats remaining
+                    System.out.println("Business Class Seats Remaining: " + domesticMap.get(flightID).getBusinessSeats());
+                    break;
+                case "4": //Check main cabin seats remaining
+                    System.out.println("Main Cabin Class Seats Remaining: " + domesticMap.get(flightID).getMainCabinSeats());
+                    break;
+                case "5": //Check customers
+                    ArrayList<Ticket> currTicketList = domesticMap.get(flightID).getTicketList();
+                    for(int i = 0; i < currTicketList.size(); i++){
+                        System.out.println("1." + currTicketList.get(i).getUser().getFirstName() + " " + currTicketList.get(i).getUser().getLastName() + "\n2.First Class Seats Purchased: " + currTicketList.get(i).getFirstClassSeatsPurchased() + "\n3.Business Class Seats Purchased: " + currTicketList.get(i).getBusinessClassSeatsPurchased() + "\n4.Main Cabin Seats Purchased: " + currTicketList.get(i).getMainCabinSeatsPurchased() + "\n5.Total Price $" + currTicketList.get(i).getPrice() + "\n");
+                    }
+                    break;
+            }
+        }
+        System.out.println(" ");
+        return;
+    }
+
+    //View Flight Revenue Method
+     
 
 }

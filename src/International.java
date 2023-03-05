@@ -1,3 +1,9 @@
+/* Enrique Munoz
+ * 2/28/2023
+ * Adv. Object Oriented Programming CS3331, Dr. Mejia
+ * Programming Assignment 2
+*/
+
 public class International extends Flight{
     //Attributes
     private int surcharge;
@@ -14,7 +20,7 @@ public class International extends Flight{
     }
 
     public International(String idIn, String flightNumberIn, String originAirportIn, String originCodeIn, String destinationAirportIn, String destinationCodeIn, String departingDateIn, String departingTimeIn, int durationIn, int distanceIn, int timeZoneDifferenceIn, String arrivalDateIn, String arrivalTimeIn, int surchargeIn, int totalSeatsIn, int firstClassSeatsIn, int businessClassSeatsIn, int mainCabinSeatsIn, int firstClassPriceIn, int businessClassPriceIn, int mainCabinPriceIn){
-        super(idIn, flightNumberIn, originAirportIn, originCodeIn, destinationAirportIn, destinationCodeIn, departingDateIn, departingTimeIn, durationIn, distanceIn, timeZoneDifferenceIn, arrivalDateIn, arrivalTimeIn, totalSeatsIn, firstClassSeatsIn, businessClassSeatsIn, mainCabinSeatsIn, firstClassSeatsIn, businessClassPriceIn, mainCabinPriceIn);
+        super(idIn, flightNumberIn, originAirportIn, originCodeIn, destinationAirportIn, destinationCodeIn, departingDateIn, departingTimeIn, durationIn, distanceIn, timeZoneDifferenceIn, arrivalDateIn, arrivalTimeIn, totalSeatsIn, firstClassSeatsIn, businessClassSeatsIn, mainCabinSeatsIn, firstClassPriceIn, businessClassPriceIn, mainCabinPriceIn);
         this.surcharge = surchargeIn;
     }
 

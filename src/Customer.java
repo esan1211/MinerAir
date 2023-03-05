@@ -1,3 +1,9 @@
+/* Enrique Munoz
+ * 2/28/2023
+ * Adv. Object Oriented Programming CS3331, Dr. Mejia
+ * Programming Assignment 2
+*/
+
 import java.util.ArrayList;
 
 public class Customer extends Person{
