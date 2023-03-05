@@ -18,6 +18,7 @@ public abstract class Flight {
     private String arrivalTime;
     private String id;
     private String flightNumber;
+    private int routeCost;
     private int ticketsPurchased = 0;
     private int firstClassPrice;
     private int businessClassPrice;
@@ -36,7 +37,7 @@ public abstract class Flight {
 
     }
 
-    public Flight(String idIn, String flightNumberIn, String originAirportIn, String originCodeIn, String destinationAirportIn, String destinationCodeIn, String departingDateIn, String departingTimeIn, int durationIn, int distanceIn, int timeZoneDifferenceIn, String arrivalDateIn, String arrivalTimeIn, int totalSeatsIn, int firstClassSeatsIn, int businessClassSeatsIn, int mainCabinSeatsIn, int firstClassPriceIn, int businessClassPriceIn, int mainCabinPriceIn){
+    public Flight(String idIn, String flightNumberIn, String originAirportIn, String originCodeIn, String destinationAirportIn, String destinationCodeIn, String departingDateIn, String departingTimeIn, int durationIn, int distanceIn, int timeZoneDifferenceIn, String arrivalDateIn, String arrivalTimeIn, int routeCostIn, int totalSeatsIn, int firstClassSeatsIn, int businessClassSeatsIn, int mainCabinSeatsIn, int firstClassPriceIn, int businessClassPriceIn, int mainCabinPriceIn){
         this.id = idIn;
         this.flightNumber = flightNumberIn;
         this.originAirport = originAirportIn;
@@ -51,6 +52,7 @@ public abstract class Flight {
         this.totalSeats = totalSeatsIn;
         this.arrivalDate = arrivalDateIn;
         this.arrivalTime = arrivalTimeIn;
+        this.routeCost = routeCostIn;
         this.firstClassSeats = firstClassSeatsIn;
         this.businessClassSeats = businessClassSeatsIn;
         this.mainCabinSeats = mainCabinSeatsIn;
@@ -232,6 +234,14 @@ public abstract class Flight {
         this.ticketList = ticketListIn;
     }
 
+    public void setRouteCost(int routeCostIn){
+        this.routeCost = routeCostIn;
+    }
+
+    public void setFlightNumber(String flightNumberIn){
+        this.flightNumber = flightNumberIn;
+    }
+
     //Getters
     public String getOriginAirport(){
         return this.originAirport;
@@ -317,6 +327,14 @@ public abstract class Flight {
         return this.ticketList;
     }
 
+    public int getRouteCost(){
+        return this.routeCost;
+    }
+
+    public String getFlightNumber(){
+        return this.flightNumber;
+    }
+
     public void printFlight(){ //Prints attributes of obj
         System.out.println("Origin Airport: " + getOriginAirport());
         System.out.println("Origin Code: " + getOriginCode());
@@ -326,6 +344,7 @@ public abstract class Flight {
         System.out.println("Departure Time: " + getDepartureTime());
         System.out.println("Arrival Date: " + getArrivalDate());
         System.out.println("Arival Time: " + getArrivalTime());
+        System.out.println("Route Cost: " + getRouteCost());
         System.out.println("Duration: " + getDuration());
         System.out.println("Distance: " + getDistance());
         System.out.println("Time Zone Difference: " + getTimeZoneDiff());

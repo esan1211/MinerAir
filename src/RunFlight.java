@@ -31,11 +31,9 @@ public class RunFlight{
         
         //User Interaction
         while(!userInput.toLowerCase().equals("exit")){
-            //String currentUser = loginMenu(database.getCustomerMap(),database.getEmployeeMap()); //Erase later
-            String currentUser = scnr.nextLine();
+            String currentUser = loginMenu(database.getCustomerMap(),database.getEmployeeMap());
             String currFlightID;
             String typeOfFlight;
-            System.out.println("Welcome " + currentUser + "!\n");
             if(database.getCustomerMap().containsKey(currentUser)){
                 while(!userInput.toLowerCase().equals("back")){
                     System.out.println("\nWhich menu would you like to access.\n1. Purchase Menu \n2. Ticket Cancel Menu \nType 'Back' to logout of your account.\n");
@@ -55,17 +53,19 @@ public class RunFlight{
                     currFlightID = idAndFlightType[0];
                     typeOfFlight = idAndFlightType[1];
                     while(!userInput.toLowerCase().equals("back")){
-                        System.out.println("\nWhich menu would you like to access.\n1.View Flight Information \n2.Flight Cancel Menu \n3.Flight Revenue MenuType\nType 'Back' to search for another Flight ID.\n");
+                        System.out.println("\nWhich menu would you like to access.\n1.View Flight Information \n2.Flight Cancel Menu \n3.Flight Revenue Menu\nType 'Back' to search for another Flight ID.\n");
                         userInput = scnr.nextLine();
                         if(userInput.equals("1")){
                             viewFlight(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight);
                         }else if(userInput.equals("2")){
-                            cancelTicket(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser);
+                            cancelFlightMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currFlightID, typeOfFlight);
+                        }else if(userInput.equals("3")){
+                            viewRevenueMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight);
                         }
                     }
                 }
             }
-            System.out.println("\nYou have been logged out of your account.\nType 'Exit' if you wish to end the program, or type 'Enter' to login again.\n");
+            System.out.println("\nYou have been logged out of your account.\nType 'Exit' if you wish to end the program, or press 'Enter' to login again.\n");
             userInput = scnr.nextLine();
         }
         scnr.close();
@@ -107,7 +107,7 @@ public class RunFlight{
                     System.out.println("Unfortunately, this name is not in our database. Please try again.");
                 }
             }
-        }else{
+        }else if(userInput.toLowerCase().equals("no")){
             while(!employeeMap.containsKey(currUser)){
                 System.out.println("\nPlease enter your first and last name. Example: John Doe");
                 currUser = scnr.nextLine();
@@ -137,6 +137,8 @@ public class RunFlight{
                     System.out.println("Unfortunately, this name is not in our database. Please try again.");
                 }
             }
+        }else{
+            System.out.println("Please input a correct response.");
         }
         return "";
     }
@@ -211,6 +213,8 @@ public class RunFlight{
                                 }
                                 currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the arraylist of tickets in the custmer obj
                                 currDomesticFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                currDomesticFlight.setTotalFirstClassRev(currDomesticFlight.getTotalFirstClassRev()+totalPrice); //Sets revenue for first class
+                                currDomesticFlight.setFirstClassSeatsSold(currDomesticFlight.getFirstClassSeatsSold()+numTickets); //Updates first class seats sold
                                 if(!flightAlreadyAdded){
                                     currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
@@ -249,6 +253,8 @@ public class RunFlight{
                                 }
                                 currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
                                 currDomesticFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                currDomesticFlight.setTotalBusinessClassRev(currDomesticFlight.getTotalBusinessClassRev()+totalPrice); //Sets revenue for business class
+                                currDomesticFlight.setBusinessClassSeatsSold(currDomesticFlight.getBusinessClassSeatsSold()+numTickets); //Updates business class seats sold
                                 if(!flightAlreadyAdded){
                                     currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
@@ -286,6 +292,8 @@ public class RunFlight{
                                 }
                                 currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
                                 currDomesticFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currDomesticFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                currDomesticFlight.setMainCabinRev(currDomesticFlight.getMainCabinRev()+totalPrice); //Sets revenue for main cabin
+                                currDomesticFlight.setMainCabinSeatsSold(currDomesticFlight.getMainCabinSeatsSold()+numTickets); //Updates main cabin seats sold
                                 if(!flightAlreadyAdded){
                                     currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
@@ -339,6 +347,8 @@ public class RunFlight{
                                 }
                                 currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the arraylist of tickets in the custmer obj
                                 currInternationalFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, numTickets, 0, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                currInternationalFlight.setTotalFirstClassRev(currInternationalFlight.getTotalFirstClassRev()+totalPrice); //Sets revenue for first class
+                                currInternationalFlight.setFirstClassSeatsSold(currInternationalFlight.getFirstClassSeatsSold()+numTickets); //Updates first class seats sold
                                 if(!flightAlreadyAdded){
                                     currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
@@ -377,6 +387,8 @@ public class RunFlight{
                                 }
                                 currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
                                 currInternationalFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, numTickets, 0, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                currInternationalFlight.setTotalBusinessClassRev(currInternationalFlight.getTotalBusinessClassRev()+totalPrice); //Sets revenue for business class
+                                currInternationalFlight.setBusinessClassSeatsSold(currInternationalFlight.getBusinessClassSeatsSold()+numTickets); //Updates business class seats sold
                                 if(!flightAlreadyAdded){
                                     currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
@@ -414,6 +426,8 @@ public class RunFlight{
                                 }
                                 currUser.getTicketsPurchased().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in the custmer obj
                                 currInternationalFlight.getTicketList().add(new Ticket(totalPrice, numTickets, confirmationNum, 0, 0, numTickets, numTickets, currUser, currInternationalFlight.getID())); //Adds ticket object to the ArrayList of tickets in flight obj
+                                currInternationalFlight.setMainCabinRev(currInternationalFlight.getMainCabinRev()+totalPrice); //Sets revenue for main cabin
+                                currInternationalFlight.setMainCabinSeatsSold(currInternationalFlight.getMainCabinSeatsSold()+numTickets); //Updates main cabin seats sold
                                 if(!flightAlreadyAdded){
                                     currUser.setFlightsPurchased(currUser.getFlightsPurchased()+1);
                                 }
@@ -517,8 +531,13 @@ public class RunFlight{
                     break;
                 case "5": //Check customers
                     ArrayList<Ticket> currTicketList = internationalMap.get(flightID).getTicketList();
-                    for(int i = 0; i < currTicketList.size(); i++){
-                        System.out.println("1." + currTicketList.get(i).getUser().getFirstName() + " " + currTicketList.get(i).getUser().getLastName() + "\n2.First Class Seats Purchased: " + currTicketList.get(i).getFirstClassSeatsPurchased() + "\n3.Business Class Seats Purchased: " + currTicketList.get(i).getBusinessClassSeatsPurchased() + "\n4.Main Cabin Seats Purchased: " + currTicketList.get(i).getMainCabinSeatsPurchased() + "\n5.Total Price $" + currTicketList.get(i).getPrice() + "\n");
+                    if(currTicketList.size() == 0){
+                        System.out.println("This Flight has no customers.");
+                    }else{
+                        System.out.println("Here is information about this Flight's customers");
+                        for(int i = 0; i < currTicketList.size(); i++){
+                            System.out.println("1." + currTicketList.get(i).getUser().getFirstName() + " " + currTicketList.get(i).getUser().getLastName() + "\n2.First Class Seats Purchased: " + currTicketList.get(i).getFirstClassSeatsPurchased() + "\n3.Business Class Seats Purchased: " + currTicketList.get(i).getBusinessClassSeatsPurchased() + "\n4.Main Cabin Seats Purchased: " + currTicketList.get(i).getMainCabinSeatsPurchased() + "\n5.Total Price $" + currTicketList.get(i).getPrice() + "\n");
+                        }
                     }
                     break;
             }
@@ -552,6 +571,146 @@ public class RunFlight{
     }
 
     //View Flight Revenue Method
-     
+    public static void viewRevenueMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, String flightID, String flightType){
+        Scanner scnr = new Scanner(System.in);
+        String userInput = "";
+        System.out.println("Which information would you like to access?");
+        System.out.println("1.First Class Seats Sold\n2.Business Class Seats Sold\n3.Main Cabin Seats Sold.\n4.Total First Class Revenue\n5.Total Business Class Revenue\n6.Total Main Cabin Revenue\n7.Total Profit\n8.First Class Seats Remaining\n9.Business Class Seats Remaining\n10.Main Cabin Seats Remaining\n");
+        userInput = scnr.next();
+        if(flightType.equals("Domestic")){
+            Domestic currDomesticFlight = domesticMap.get(flightID);
+            switch(userInput){
+                case "1":
+                    System.out.println("First Class Seats Sold: " + currDomesticFlight.getFirstClassSeatsSold());
+                    break;
+                case "2":
+                    System.out.println("Business Class Seats Sold: " + currDomesticFlight.getBusinessClassSeatsSold());
+                    break;
+                case "3":
+                    System.out.println("Main Cabin Seats Sold: " + currDomesticFlight.getMainCabinSeatsSold());
+                    break;
+                case "4":
+                    System.out.println("Total First Class Revenue: $" + currDomesticFlight.getTotalFirstClassRev());
+                    break;
+                case "5":
+                    System.out.println("Total Business Class Revenue: $" + currDomesticFlight.getTotalBusinessClassRev());
+                    break;
+                case "6":
+                    System.out.println("Total Main Cabin Seats Revenue: $" + currDomesticFlight.getMainCabinRev());
+                    break;
+                case "7":
+                    int totalSold = currDomesticFlight.getTotalFirstClassRev() + currDomesticFlight.getTotalBusinessClassRev() + currDomesticFlight.getMainCabinRev(); //Total Profit for current Flight
+                    System.out.println("Total Profit: $" + (totalSold - currDomesticFlight.getRouteCost()));
+                    break;
+                case "8":
+                    System.out.println("First Class Seats Remaining: " + currDomesticFlight.getFirstClassSeats());
+                    break;
+                case "9":
+                    System.out.println("Business Class Seats Remaining: " + currDomesticFlight.getBusinessSeats());
+                    break;
+                case "10":
+                    System.out.println("Main Cabin Seats Remaining: " + currDomesticFlight.getMainCabinSeats());
+                    break;
+                default:
+                    System.out.println("This is not an option try again.");
+                    break;
+            }
+        }else if(flightType.equals("International")){
+            International currInternationalFlight = internationalMap.get(flightID);
+            switch(userInput){
+                case "1":
+                    System.out.println("First Class Seats Sold: " + currInternationalFlight.getFirstClassSeatsSold());
+                    break;
+                case "2":
+                    System.out.println("Business Class Seats Sold: " + currInternationalFlight.getBusinessClassSeatsSold());
+                    break;
+                case "3":
+                    System.out.println("Main Cabin Seats Sold: " + currInternationalFlight.getMainCabinSeatsSold());
+                    break;
+                case "4":
+                    System.out.println("Total First Class Seats Revenue: $" + currInternationalFlight.getTotalFirstClassRev());
+                    break;
+                case "5":
+                    System.out.println("Total Business Class Seats Revenue: $" + currInternationalFlight.getTotalBusinessClassRev());
+                    break;
+                case "6":
+                    System.out.println("Total Main Cabin Seats Revenue: $" + currInternationalFlight.getMainCabinRev());
+                    break;
+                case "7":
+                    int totalSold = currInternationalFlight.getTotalFirstClassRev() + currInternationalFlight.getTotalBusinessClassRev() + currInternationalFlight.getMainCabinRev(); //Total Profit for current Flight
+                    System.out.println("Total Profit: $" + (totalSold - currInternationalFlight.getRouteCost()));
+                    break;
+                case "8":
+                    System.out.println("First Class Seats Remaining: " + currInternationalFlight.getFirstClassSeats());
+                    break;
+                case "9":
+                    System.out.println("Business Class Seats Remaining: " + currInternationalFlight.getBusinessSeats());
+                    break;
+                case "10":
+                    System.out.println("Main Cabin Seats Remaining: " + currInternationalFlight.getMainCabinSeats());
+                    break;
+                default:
+                    System.out.println("This is not an option try again.");
+                    break;
+            }
+        }
+    }
 
+    //Cancel Flight Menu
+    public static void cancelFlightMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String flightID, String flightType){
+        Scanner scnr = new Scanner(System.in);
+        String userInput = "";
+        if(flightType.equals("International")){
+            International currInternationalFlight = internationalMap.get(flightID);
+            System.out.println("\nAre you sure you want to cancel Flight ID " + flightID + ", " + currInternationalFlight.getOriginAirport() + " to " + currInternationalFlight.getDestinationAirport() + ".");
+            System.out.println("Type 'Confirm' to proceed with this action.");
+            userInput = scnr.nextLine();
+            if(userInput.toLowerCase().equals("confirm")){
+                ArrayList <Ticket> currTicketArr = currInternationalFlight.getTicketList();
+                for(int i = 0; i < currTicketArr.size(); i++){
+                    Customer currUser = customerMap.get(currTicketArr.get(i).getUser().getFirstName() + " " + currTicketArr.get(i).getUser().getLastName());
+                    currUser.setMoney(currUser.getMoney()+currTicketArr.get(i).getPrice()); //Returns customers money
+                    currInternationalFlight.setFirstClassSeats(currInternationalFlight.getFirstClassSeats()+currTicketArr.get(i).getFirstClassSeatsPurchased()); //Restores first class seats
+                    currInternationalFlight.setBusinessClassSeats(currInternationalFlight.getBusinessSeats()+currTicketArr.get(i).getBusinessClassSeatsPurchased()); //Restores business class seats
+                    currInternationalFlight.setMainCabinSeats(currInternationalFlight.getMainCabinSeats()+currTicketArr.get(i).getMainCabinSeatsPurchased()); //Restores main class seats
+                    currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats()+currTicketArr.get(i).getNumSeats()); //Restores total number of flight seats
+                    currTicketArr.get(i).setAmount(0); //Sets total cost of flight ticket to 0
+                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()-1); //Updates customer flights purchased
+                    for(int j = 0; j < currUser.getTicketsPurchased().size(); j++){ //Finds corresponding customer ticket and sets total cost to 0
+                        if(currUser.getTicketsPurchased().get(j).getFlightID().equals(currTicketArr.get(i).getFlightID()) && currUser.getTicketsPurchased().get(j).getConfirmationNum() == currTicketArr.get(i).getConfirmationNum()){
+                            currUser.getTicketsPurchased().get(j).setAmount(0); //Customer total cost set to 0
+                            currUser.getTicketsPurchased().get(j).setFlightID("Cancelled " + flightID); //Writes a cancel note on Flight ID
+                        }
+                    }
+                    System.out.println("Flight ID: " + flightID + ", " + currInternationalFlight.getOriginAirport() + " to " + currInternationalFlight.getDestinationAirport() + " has been cancelled.");           
+                }
+            }
+        }else{
+            Domestic currDomestic = domesticMap.get(flightID);
+            System.out.println("\nAre you sure you want to cancel Flight ID " + flightID + ", " + currDomestic.getOriginAirport() + " to " + currDomestic.getDestinationAirport() + ".");
+            System.out.println("Type 'Confirm' to proceed with this action.");
+            userInput = scnr.nextLine();
+            if(userInput.toLowerCase().equals("confirm")){
+                ArrayList <Ticket> currTicketArr = currDomestic.getTicketList();
+                for(int i = 0; i < currTicketArr.size(); i++){
+                    Customer currUser = customerMap.get(currTicketArr.get(i).getUser().getFirstName() + " " + currTicketArr.get(i).getUser().getLastName());
+                    currUser.setMoney(currUser.getMoney()+currTicketArr.get(i).getPrice()); //Returns customers money
+                    currDomestic.setFirstClassSeats(currDomestic.getFirstClassSeats()+currTicketArr.get(i).getFirstClassSeatsPurchased()); //Restores first class seats
+                    currDomestic.setBusinessClassSeats(currDomestic.getBusinessSeats()+currTicketArr.get(i).getBusinessClassSeatsPurchased()); //Restores business class seats
+                    currDomestic.setMainCabinSeats(currDomestic.getMainCabinSeats()+currTicketArr.get(i).getMainCabinSeatsPurchased()); //Restores main class seats
+                    currDomestic.setTotalSeats(currDomestic.getTotalSeats()+currTicketArr.get(i).getNumSeats()); //Restores total number of flight seats
+                    currTicketArr.get(i).setAmount(0); //Sets total cost of flight ticket to 0
+                    currUser.setFlightsPurchased(currUser.getFlightsPurchased()-1); //Updates customer flights purchased
+                    for(int j = 0; j < currUser.getTicketsPurchased().size(); j++){ //Finds corresponding customer ticket and sets total cost to 0
+                        if(currUser.getTicketsPurchased().get(j).getFlightID().equals(currTicketArr.get(i).getFlightID()) && currUser.getTicketsPurchased().get(j).getConfirmationNum() == currTicketArr.get(i).getConfirmationNum()){
+                            currUser.getTicketsPurchased().get(j).setAmount(0); //Customer total cost set to 0
+                            currUser.getTicketsPurchased().get(j).setFlightID("Cancelled " + flightID); //Writes a cancel note on Flight ID
+                        }
+                    }
+                    System.out.println("\nFlight ID: " + flightID + ", " + currDomestic.getOriginAirport() + " to " + currDomestic.getDestinationAirport() + " has been cancelled.");
+                }
+            }
+
+        }
+    }
 }
