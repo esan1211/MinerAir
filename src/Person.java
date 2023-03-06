@@ -22,6 +22,7 @@ public abstract class Person {
     }
 
     public Person(String idIn, String firstNameIn, String lastNameIn, String dateOfBirthIn, String roleIn, double moneyIn, boolean minerAirMembershipIn, String usernameIn, String passwordIn){
+        this.id = idIn;
         this.firstName = firstNameIn;
         this.lastName = lastNameIn;
         this.dateOfBirthIn = dateOfBirthIn;

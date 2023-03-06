@@ -25,7 +25,12 @@ public class RunFlight{
         GenerateDatabase database = new GenerateDatabase();
         database.setDomesticInternationMap();
         database.setPeopleMap();
-        
+
+        //Initialize CSV Updater
+        CSVWriter csvWrite = new CSVWriter();
+        csvWrite.openFlightFile();
+        csvWrite.openPersonFile();
+
         //Initialize Log
         Log logger = new Log();
         logger.openFile();
@@ -80,6 +85,10 @@ public class RunFlight{
         }
         scnr.close();
         logger.closeLog();
+        csvWrite.writePersonFile(database.getCustomerMap(),database.getEmployeeMap());
+        csvWrite.writeFlightFile(database.getInternationalFlightMap(), database.getDomesticFlightMap());
+        csvWrite.closePersonFile();
+        csvWrite.closeFlightFile();
     }
 
     //User Login Interaction Method
