@@ -26,6 +26,10 @@ public class RunFlight{
         database.setDomesticInternationMap();
         database.setPeopleMap();
         
+        //Initialize Log
+        Log logger = new Log();
+        logger.openFile();
+        
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         
@@ -35,6 +39,7 @@ public class RunFlight{
             String currFlightID;
             String typeOfFlight;
             if(database.getCustomerMap().containsKey(currentUser)){
+                logger.writeLog(currentUser + " has logged in.");
                 while(!userInput.toLowerCase().equals("back")){
                     System.out.println("\nWhich menu would you like to access.\n1. Purchase Menu \n2. Ticket Cancel Menu \nType 'Back' to logout of your account.\n");
                     userInput = scnr.nextLine();
@@ -42,33 +47,39 @@ public class RunFlight{
                         String[] idAndFlightType = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
                         currFlightID = idAndFlightType[0];
                         typeOfFlight = idAndFlightType[1];
-                        purchaseMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser, currFlightID, typeOfFlight);
+                        logger.writeLog(currentUser + " has searched " + typeOfFlight + " Flight ID: " + currFlightID);
+                        purchaseMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser, currFlightID, typeOfFlight, logger);
                     }else if(userInput.equals("2")){
-                        cancelTicket(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser);
+                        cancelTicket(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currentUser, logger);
                     }
                 }
+                logger.writeLog(currentUser + " has logged out.");
             }else if(database.getEmployeeMap().containsKey(currentUser)){
+                logger.writeLog(currentUser + " has logged in.");
                 while(!userInput.toLowerCase().equals("back")){
                     String[] idAndFlightType = searchFlights(database.getInternationalFlightMap(), database.getDomesticFlightMap());
                     currFlightID = idAndFlightType[0];
                     typeOfFlight = idAndFlightType[1];
+                    logger.writeLog(currentUser + " has searched " + typeOfFlight + " Flight ID: " + currFlightID);
                     while(!userInput.toLowerCase().equals("back")){
                         System.out.println("\nWhich menu would you like to access.\n1.View Flight Information \n2.Flight Cancel Menu \n3.Flight Revenue Menu\nType 'Back' to search for another Flight ID.\n");
                         userInput = scnr.nextLine();
                         if(userInput.equals("1")){
-                            viewFlight(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight);
+                            viewFlight(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight, currentUser, logger);
                         }else if(userInput.equals("2")){
-                            cancelFlightMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currFlightID, typeOfFlight);
+                            cancelFlightMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), database.getCustomerMap(), currFlightID, typeOfFlight, currentUser, logger);
                         }else if(userInput.equals("3")){
-                            viewRevenueMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight);
+                            viewRevenueMenu(database.getInternationalFlightMap(), database.getDomesticFlightMap(), currFlightID, typeOfFlight, currentUser, logger);
                         }
                     }
                 }
+                logger.writeLog(currentUser + " has logged out.");
             }
             System.out.println("\nYou have been logged out of your account.\nType 'Exit' if you wish to end the program, or press 'Enter' to login again.\n");
             userInput = scnr.nextLine();
         }
         scnr.close();
+        logger.closeLog();
     }
 
     //User Login Interaction Method
@@ -166,9 +177,10 @@ public class RunFlight{
     }
 
     //User Flight Menu Interaction Method
-    public static void purchaseMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String customerName, String flightID, String flightType){
+    public static void purchaseMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String customerName, String flightID, String flightType, Log logger){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
+        logger.writeLog(customerName + " accessed Purchase Menu.");
         Customer currUser = customerMap.get(customerName);
         while(!userInput.toLowerCase().equals("exit")){
             //Domestic Flight Purchase Menu
@@ -202,6 +214,7 @@ public class RunFlight{
                             System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
                             userInput = scnr.nextLine();
                             if(userInput.toLowerCase().equals("confirm")){
+                                logger.writeLog(currUser.getFirstName() + " " + currUser.getLastName() + " has bought " + numTickets + " First Class Tickets in Flight ID: " + flightID);
                                 currDomesticFlight.setTotalSeats(currDomesticFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
                                 currDomesticFlight.setFirstClassSeats((currDomesticFlight.getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
                                 currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
@@ -242,6 +255,7 @@ public class RunFlight{
                             System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
                             userInput = scnr.nextLine();
                             if(userInput.toLowerCase().equals("confirm")){
+                                logger.writeLog(currUser.getFirstName() + " " + currUser.getLastName() + " has bought " + numTickets + " Business Class Tickets in Flight ID: " + flightID);
                                 currDomesticFlight.setTotalSeats(currDomesticFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
                                 currDomesticFlight.setBusinessClassSeats((currDomesticFlight.getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
                                 currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
@@ -281,6 +295,7 @@ public class RunFlight{
                             System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
                             userInput = scnr.nextLine();
                             if(userInput.toLowerCase().equals("confirm")){
+                                logger.writeLog(currUser.getFirstName() + " " + currUser.getLastName() + " has bought " + numTickets + " Main Cabin Tickets in Flight ID: " + flightID);
                                 currDomesticFlight.setTotalSeats(currDomesticFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
                                 currDomesticFlight.setMainCabinSeats((currDomesticFlight.getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
                                 currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
@@ -336,6 +351,7 @@ public class RunFlight{
                             System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
                             userInput = scnr.nextLine();
                             if(userInput.toLowerCase().equals("confirm")){
+                                logger.writeLog(currUser.getFirstName() + " " + currUser.getLastName() + " has bought " + numTickets + " First Class Tickets in Flight ID: " + flightID);
                                 currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
                                 currInternationalFlight.setFirstClassSeats((currInternationalFlight.getFirstClassSeats() - numTickets)); //Changes the total number of first class seats available after purchase
                                 currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
@@ -376,6 +392,7 @@ public class RunFlight{
                             System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
                             userInput = scnr.nextLine();
                             if(userInput.toLowerCase().equals("confirm")){
+                                logger.writeLog(currUser.getFirstName() + " " + currUser.getLastName() + " has bought " + numTickets + " Business Class Tickets in Flight ID: " + flightID);
                                 currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
                                 currInternationalFlight.setBusinessClassSeats((currInternationalFlight.getBusinessSeats() - numTickets)); //Changes the total number of second class seats available after purchase
                                 currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
@@ -415,6 +432,7 @@ public class RunFlight{
                             System.out.println("The total price of this transaction is $" + totalPrice + ", type 'Confirm' if you would like to proceed.");
                             userInput = scnr.nextLine();
                             if(userInput.toLowerCase().equals("confirm")){
+                                logger.writeLog(currUser.getFirstName() + " " + currUser.getLastName() + " has bought " + numTickets + " Main Cabin Tickets in Flight ID: " + flightID);
                                 currInternationalFlight.setTotalSeats(currInternationalFlight.getTotalSeats() - numTickets); //Changes the total number of seats available after purchase
                                 currInternationalFlight.setMainCabinSeats((currInternationalFlight.getMainCabinSeats() - numTickets)); //Changes the total number of second class seats available after purchase
                                 currUser.setMoney(currUser.getMoney() - totalPrice); //Subtracts total purchase price from users money amount
@@ -447,7 +465,7 @@ public class RunFlight{
     }
 
     //Ticket Cancel Method
-    public static void cancelTicket(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String customerName){
+    public static void cancelTicket(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String customerName, Log logger){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         Customer currUser = customerMap.get(customerName);
@@ -474,6 +492,7 @@ public class RunFlight{
                 System.out.println("Type 'confirm' you want to cancel this ticket or press 'Enter' to exit.");
                 userInput = scnr.nextLine();
                 if(userInput.toLowerCase().equals("confirm")){
+                    logger.writeLog(customerName + " has cancelled their ticket from Flight ID: " + currUser.getTicketsPurchased().get(idxOfTicket).getFlightID());
                     internationalMap.get(currFlightID).setFirstClassSeats(internationalMap.get(currFlightID).getFirstClassSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getFirstClassSeatsPurchased()); //Restores first class seats
                     internationalMap.get(currFlightID).setBusinessClassSeats(internationalMap.get(currFlightID).getBusinessSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getBusinessClassSeatsPurchased()); //Restores business class seats
                     internationalMap.get(currFlightID).setMainCabinSeats(internationalMap.get(currFlightID).getMainCabinSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getMainCabinSeatsPurchased()); //Restores main class seats
@@ -490,6 +509,7 @@ public class RunFlight{
                 System.out.println("Type 'confirm' you want to cancel this ticket or press 'Enter' to exit.");
                 userInput = scnr.nextLine();
                 if(userInput.toLowerCase().equals("confirm")){
+                    logger.writeLog(customerName + " has cancelled their ticket from Flight ID: " + currUser.getTicketsPurchased().get(idxOfTicket).getFlightID());
                     domesticMap.get(currFlightID).setFirstClassSeats(domesticMap.get(currFlightID).getFirstClassSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getFirstClassSeatsPurchased()); //Restores first class seats
                     domesticMap.get(currFlightID).setBusinessClassSeats(domesticMap.get(currFlightID).getBusinessSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getBusinessClassSeatsPurchased()); //Restores business class seats
                     domesticMap.get(currFlightID).setMainCabinSeats(domesticMap.get(currFlightID).getMainCabinSeats() + currUser.getTicketsPurchased().get(idxOfTicket).getMainCabinSeatsPurchased()); //Restores main class seats
@@ -509,9 +529,10 @@ public class RunFlight{
     }
 
     //View Specific Flight Method
-    public static void viewFlight(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, String flightID, String flightType){
+    public static void viewFlight(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, String flightID, String flightType, String currEmployee, Log logger){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
+        logger.writeLog(currEmployee + " accessed Flight Information Menu.");
         if(flightType.equals("International")){
             internationalMap.get(flightID).printFlight();
             System.out.println("\nEnter the corresponding number to view a menu.\n1.Total Seats Remaining\n2.First Class Seats Remaining\n3.Business Class Seats Remaining\n4.Main Cabin Seats Remaining\n5.Customer Purchases\n");
@@ -571,11 +592,12 @@ public class RunFlight{
     }
 
     //View Flight Revenue Method
-    public static void viewRevenueMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, String flightID, String flightType){
+    public static void viewRevenueMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, String flightID, String flightType, String currEmployee, Log logger){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         System.out.println("Which information would you like to access?");
-        System.out.println("1.First Class Seats Sold\n2.Business Class Seats Sold\n3.Main Cabin Seats Sold.\n4.Total First Class Revenue\n5.Total Business Class Revenue\n6.Total Main Cabin Revenue\n7.Total Profit\n8.First Class Seats Remaining\n9.Business Class Seats Remaining\n10.Main Cabin Seats Remaining\n");
+        logger.writeLog(currEmployee + " has accessed Flight Revenue Menu.");
+        System.out.println("1.First Class Seats Sold\n2.Business Class Seats Sold\n3.Main Cabin Seats Sold\n4.Total First Class Revenue\n5.Total Business Class Revenue\n6.Total Main Cabin Revenue\n7.Total Profit\n8.First Class Seats Remaining\n9.Business Class Seats Remaining\n10.Main Cabin Seats Remaining\n");
         userInput = scnr.next();
         if(flightType.equals("Domestic")){
             Domestic currDomesticFlight = domesticMap.get(flightID);
@@ -657,7 +679,7 @@ public class RunFlight{
     }
 
     //Cancel Flight Menu
-    public static void cancelFlightMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String flightID, String flightType){
+    public static void cancelFlightMenu(HashMap<String,International> internationalMap, HashMap<String,Domestic> domesticMap, HashMap<String,Customer> customerMap, String flightID, String flightType, String currEmployee, Log logger){
         Scanner scnr = new Scanner(System.in);
         String userInput = "";
         if(flightType.equals("International")){
@@ -666,6 +688,7 @@ public class RunFlight{
             System.out.println("Type 'Confirm' to proceed with this action.");
             userInput = scnr.nextLine();
             if(userInput.toLowerCase().equals("confirm")){
+                logger.writeLog(currEmployee + " has cancelled Flight ID: " + flightID);
                 ArrayList <Ticket> currTicketArr = currInternationalFlight.getTicketList();
                 for(int i = 0; i < currTicketArr.size(); i++){
                     Customer currUser = customerMap.get(currTicketArr.get(i).getUser().getFirstName() + " " + currTicketArr.get(i).getUser().getLastName());
@@ -691,6 +714,7 @@ public class RunFlight{
             System.out.println("Type 'Confirm' to proceed with this action.");
             userInput = scnr.nextLine();
             if(userInput.toLowerCase().equals("confirm")){
+                logger.writeLog(currEmployee + " has cancelled Flight ID: " + flightID);
                 ArrayList <Ticket> currTicketArr = currDomestic.getTicketList();
                 for(int i = 0; i < currTicketArr.size(); i++){
                     Customer currUser = customerMap.get(currTicketArr.get(i).getUser().getFirstName() + " " + currTicketArr.get(i).getUser().getLastName());

@@ -1,0 +1,4 @@
+Enrique Munoz has logged in.
+Enrique Munoz has searched Domestic Flight ID: 1
+Enrique Munoz has accessed Flight Revenue Menu.
+Enrique Munoz has logged out.
